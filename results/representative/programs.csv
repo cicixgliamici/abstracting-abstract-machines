@@ -1,0 +1,11 @@
+example,family,source
+pipeline_2,closure reuse,((lambda transform. (transform (transform (lambda z. (lambda w. z))))) (lambda x. x))
+pipeline_4,closure reuse,((lambda transform. (transform (transform (transform (transform (lambda z. (lambda w. z))))))) (lambda x. x))
+church_2,higher-order iteration,(((lambda f. (lambda x. (f (f x)))) (lambda x. x)) (lambda z. (lambda w. z)))
+church_4,higher-order iteration,(((lambda f. (lambda x. (f (f (f (f x)))))) (lambda x. x)) (lambda z. (lambda w. z)))
+repeated_calls,closure reuse,((lambda id. ((lambda ignored. (id (lambda z. (lambda w. z)))) (id (lambda x. x)))) (lambda x. x))
+shared_writes,mutation,((lambda cell. ((lambda read. ((lambda discarded. ((lambda discarded. ((lambda discarded. (read (lambda x. x))) (set! cell #f))) (set! cell (lambda x. x)))) (set! cell (lambda z. (lambda w. z))))) (lambda unused. cell))) (lambda x. x))
+old_closure_environment,mutation,((lambda outside. ((lambda captured. ((lambda x. ((set! x (outside #f)) (lambda x. x))) (lambda unused. captured))) (lambda z. (lambda w. z)))) (lambda x. x))
+escape_skips_omega,nonlocal control,(call/cc (lambda k. ((lambda unused. ((lambda x. (x x)) (lambda x. (x x)))) (k (lambda z. (lambda w. z))))))
+multi_shot,nonlocal control and mutation,((lambda saved. ((lambda first. ((lambda second. ((lambda result. (if first ((lambda discarded. (saved (lambda z. (lambda w. z)))) (set! first #f)) (if second ((lambda discarded. (saved #f)) (set! second #f)) result))) (call/cc (lambda k. ((lambda discarded. (lambda x. x)) (set! saved k)))))) (lambda x. x))) (lambda x. x))) #f)
+omega,nontermination,((lambda x. (x x)) (lambda x. (x x)))

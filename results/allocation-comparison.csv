@@ -1,0 +1,15 @@
+example,allocation,reachable_states,final_states,distinct_final_lambda_terms
+identity,pool-1,1,1,1
+identity,sites,1,1,1
+application,pool-1,9,2,1
+application,sites,5,1,1
+lexical capture,pool-1,11891,3258,4
+lexical capture,sites,8,1,1
+shadowing,pool-1,11891,3258,3
+shadowing,sites,8,1,1
+returned closure,pool-1,8,3,2
+returned closure,sites,4,1,1
+nested application,pool-1,767,174,3
+nested application,sites,9,1,1
+omega,pool-1,27,0,0
+omega,sites,16,0,0

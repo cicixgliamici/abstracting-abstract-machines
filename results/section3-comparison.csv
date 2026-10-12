@@ -1,0 +1,45 @@
+example,gc,concrete_outcome,concrete_value_syntax,reachable_states,final_states,stuck_states,max_store_addresses,possible_final_value_syntax
+if false,off,finished,(lambda z. (lambda w. z)),3,1,0,2,(lambda z. (lambda w. z))
+if false,on,finished,(lambda z. (lambda w. z)),3,1,0,2,(lambda z. (lambda w. z))
+if function,off,finished,(lambda z. (lambda w. z)),3,1,0,2,(lambda z. (lambda w. z))
+if function,on,finished,(lambda z. (lambda w. z)),3,1,0,2,(lambda z. (lambda w. z))
+if primitive,off,finished,(lambda x. x),3,1,0,2,(lambda x. x)
+if primitive,on,finished,(lambda x. x),3,1,0,2,(lambda x. x)
+conditional saved binding,off,finished,(lambda z. (lambda w. z)),7,1,0,5,(lambda z. (lambda w. z))
+conditional saved binding,on,finished,(lambda z. (lambda w. z)),7,1,0,3,(lambda z. (lambda w. z))
+if continuation,off,finished,(lambda x. x),7,1,0,5,(lambda x. x)
+if continuation,on,finished,(lambda x. x),7,1,0,3,(lambda x. x)
+set returns old value,off,finished,(lambda x. x),6,1,0,5,(lambda x. x)
+set returns old value,on,finished,(lambda x. x),6,1,0,3,(lambda x. x)
+set updates binding,off,finished,#f,11,2,0,8,#f | (lambda x. x)
+set updates binding,on,finished,#f,11,2,0,4,#f | (lambda x. x)
+nested assignment,off,finished,#f,9,2,0,6,#f | (lambda x. x)
+nested assignment,on,finished,#f,9,2,0,4,#f | (lambda x. x)
+self-referential binding,off,finished,(lambda unused. x),11,2,0,8,#f | (lambda unused. x)
+self-referential binding,on,finished,(lambda unused. x),11,2,0,4,#f | (lambda unused. x)
+shared mutable binding,off,finished,#f,18,2,0,14,#f | (lambda x. x)
+shared mutable binding,on,finished,#f,18,2,0,5,#f | (lambda x. x)
+shadowed mutation,off,finished,(lambda x. x),13,1,0,11,(lambda x. x)
+shadowed mutation,on,finished,(lambda x. x),13,1,0,5,(lambda x. x)
+old closure environment,off,finished,(lambda z. (lambda w. z)),21,1,0,17,(lambda z. (lambda w. z))
+old closure environment,on,finished,(lambda z. (lambda w. z)),21,1,0,7,(lambda z. (lambda w. z))
+continuation escape,off,finished,(lambda x. x),8,1,0,6,(lambda x. x)
+continuation escape,on,finished,(lambda x. x),8,1,0,3,(lambda x. x)
+escape skips omega,off,finished,(lambda z. (lambda w. z)),10,1,0,8,(lambda z. (lambda w. z))
+escape skips omega,on,finished,(lambda z. (lambda w. z)),10,1,0,4,(lambda z. (lambda w. z))
+escape pending argument,off,finished,(lambda z. (lambda w. z)),12,1,0,9,(lambda z. (lambda w. z))
+escape pending argument,on,finished,(lambda z. (lambda w. z)),12,1,0,4,(lambda z. (lambda w. z))
+invoke returned continuation,off,finished,(lambda x. x),12,1,0,7,(lambda x. x)
+invoke returned continuation,on,finished,(lambda x. x),11,1,0,3,(lambda x. x)
+continuation reentry,off,finished,(lambda z. (lambda w. z)),109,8,1,24,(lambda x. x) | (lambda z. (lambda w. z))
+continuation reentry,on,finished,(lambda z. (lambda w. z)),44,1,1,7,(lambda z. (lambda w. z))
+multi-shot continuation,off,finished,#f,736,48,5,34,#f | (lambda x. x) | (lambda z. (lambda w. z))
+multi-shot continuation,on,finished,#f,96,2,2,8,#f | (lambda z. (lambda w. z))
+returned continuation,off,finished,#<continuation>,5,1,0,4,#<continuation>
+returned continuation,on,finished,#<continuation>,5,1,0,2,#<continuation>
+callcc receives continuation,off,finished,#<continuation>,9,1,0,6,#<continuation>
+callcc receives continuation,on,finished,#<continuation>,9,1,0,3,#<continuation>
+false application,off,stuck,,3,0,1,3,
+false application,on,stuck,,3,0,1,2,
+callcc receives false,off,stuck,,3,0,1,3,
+callcc receives false,on,stuck,,3,0,1,2,

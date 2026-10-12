@@ -1,0 +1,41 @@
+{
+  "utc": "2026-10-12T18:36:01.490338+00:00",
+  "configuration": {
+    "repetitions": 3,
+    "max_states": 5000,
+    "cpu_limit": 2.0,
+    "wall_limit": 15.0
+  },
+  "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "ocaml": "4.14.1",
+  "dune": "3.23.1",
+  "git_revision": "e4f96d46b74eed0cf776273a2a489c0fd71a1798",
+  "git_status": "M README.md\n M instructions.md\n?? .gitignore\n?? CORRECTNESS.md\n?? EXPERIMENTS.md\n?? GC_EXPERIMENT.md\n?? IMPLEMENTATION_SCOPE.md\n?? PAPER_NOTES.md\n?? PAPER_TO_CODE.md\n?? REFERENCE_SEMANTICS.md\n?? REPORT.md\n?? SECTION3_NOTES.md\n?? VALIDATION.md\n?? bin/\n?? dune-project\n?? lib/\n?? results/\n?? scripts/\n?? test/",
+  "source_sha256": {
+    "bin/dune": "8e59dbbb8082fd1b9ba9e72cb6edea6a36a271ca0f5f2ad0ecb044eea275d242",
+    "bin/experiments.ml": "2bae08523a5cb12b39fb832f91151d51e4835c16a7317dab0caca9f8b30b3f0b",
+    "bin/gc_comparison.ml": "8b7f06950aebfca23fa2639930baed45e0b23b94c2367b6ba6996caa0e4af6e8",
+    "bin/main.ml": "4e9f9983dbdac8a3d2295d8ee0d36f66be136aed754a204cdf526a4262b6719b",
+    "bin/reference_comparison.ml": "c5de00639694caf187eb7af8700aab9dbcd36b7c58b8669f360cccf09733783c",
+    "bin/section3_comparison.ml": "928059dcb27d21dfd05307e43ba9328e6c9cdeeaf3d77504e8244dc7d7c689c6",
+    "dune-project": "6443ce5df77ddd778b7a63b845004556130c24a94c07326655ceb7b6a26b3f19",
+    "lib/analysis_metrics.ml": "16be60552fb4c948d4cccf66262ea75001ac2c38b683479530ab4084ec0c81f4",
+    "lib/cek.ml": "683a294ecfa4b44d0f36981bb521a0701554e6af898adafec1125b94c00668e7",
+    "lib/closure_reification.ml": "28650262eb4b49d1976fd4a241c2a351473d0741c75fff00e3293c28d5e92384",
+    "lib/closure_reification.mli": "3b7f6a7187ccb70fc1ca3202ca806969851f5db0976da10a9f4e27388103d9e7",
+    "lib/dune": "de224202fbde187e4fba4fb813dff0d96f820db9df7520a607656edef2420ef4",
+    "lib/examples.ml": "a6be0f108c4efb5992f7197ba6146972c88eb36449a8d58b0a9b84d8bd4acd6d",
+    "lib/experiment_analysis.ml": "0af93912cac2081c9a2b49f0636d23fd02d9accff691609a115fdb04fd0ebcc4",
+    "lib/experiment_examples.ml": "b8f9e31fb8d911806178fc1a9aa4de30dc2412bf6edfb10d9a947b424091564e",
+    "lib/extended_examples.ml": "8c027040237154472624cf5fed51fef6856d6938f6c55af1033d3452cc886072",
+    "lib/reference_examples.ml": "2cf8a83161a5dc8d4dcf796d540fc976a260d3fd24c9fc2f65f3ec550c0eee2c",
+    "lib/reference_semantics.ml": "c0966f32fdd5dfc5974641a343c8c60ec614f0eca1204a8db130027346951998",
+    "lib/reference_semantics.mli": "d9f321716cdcab1ce8eb81db3f6005d9cdfdccbc4f1424e5313539afcd830c0e",
+    "lib/store_machine.ml": "9a412cb83da9d8744f20dda3ca65507414199588e60ad5030472620244633e49",
+    "lib/syntax.ml": "a92fff32bd39addd4c7192eb85c13520e486ffc8ffb1193d01aab39c27b17b4a",
+    "scripts/run_experiments.py": "f9808a93a0e3d723810501bef2b75ad92de34c4fe59ae6cf4add70161eb04e9a"
+  },
+  "timing_scope": "Explorer only; excludes concrete/reference checks and metric summarization",
+  "clock": "Sys.time CPU; Unix.gettimeofday wall; no warm-up; fresh process per trial"
+}
