@@ -1,31 +1,31 @@
 example,allocation,gc,reachable_states,final_states,distinct_final_lambda_terms,max_store_addresses,max_store_values,cpu_seconds_median
 identity,pool-1,off,1,1,1,1,1,0.000002
-identity,pool-1,on,1,1,1,1,1,0.000002
+identity,pool-1,on,1,1,1,1,1,0.000001
 identity,sites,off,1,1,1,1,1,0.000002
-identity,sites,on,1,1,1,1,1,0.000002
-application,pool-1,off,9,2,1,2,5,0.000019
-application,pool-1,on,8,1,1,2,5,0.000016
+identity,sites,on,1,1,1,1,1,0.000001
+application,pool-1,off,9,2,1,2,5,0.000010
+application,pool-1,on,8,1,1,2,5,0.000012
 application,sites,off,5,1,1,4,4,0.000004
-application,sites,on,5,1,1,2,2,0.000007
-lexical capture,pool-1,off,11891,3258,4,2,16,0.440294
-lexical capture,pool-1,on,10221,1588,4,2,16,0.431612
-lexical capture,sites,off,8,1,1,7,7,0.000018
-lexical capture,sites,on,8,1,1,3,3,0.000018
-shadowing,pool-1,off,11891,3258,3,2,16,0.403136
-shadowing,pool-1,on,9536,903,3,2,16,0.391688
-shadowing,sites,off,8,1,1,7,7,0.000011
-shadowing,sites,on,8,1,1,3,3,0.000017
+application,sites,on,5,1,1,2,2,0.000005
+lexical capture,pool-1,off,11891,3258,4,2,16,0.470963
+lexical capture,pool-1,on,10221,1588,4,2,16,0.597672
+lexical capture,sites,off,8,1,1,7,7,0.000006
+lexical capture,sites,on,8,1,1,3,3,0.000011
+shadowing,pool-1,off,11891,3258,3,2,16,0.420561
+shadowing,pool-1,on,9536,903,3,2,16,0.382553
+shadowing,sites,off,8,1,1,7,7,0.000010
+shadowing,sites,on,8,1,1,3,3,0.000009
 returned closure,pool-1,off,8,3,2,2,5,0.000011
-returned closure,pool-1,on,8,3,2,2,5,0.000020
-returned closure,sites,off,4,1,1,4,4,0.000004
-returned closure,sites,on,4,1,1,2,2,0.000007
-nested application,pool-1,off,767,174,3,2,13,0.009210
-nested application,pool-1,on,661,68,3,2,13,0.010549
-nested application,sites,off,9,1,1,7,7,0.000005
-nested application,sites,on,9,1,1,3,3,0.000010
-omega,pool-1,off,27,0,0,2,7,0.000052
-omega,pool-1,on,27,0,0,2,7,0.000086
-omega,sites,off,16,0,0,9,9,0.000016
-omega,sites,on,13,0,0,3,3,0.000021
-repeated calls,sites,off,18,2,2,12,13,0.000013
-repeated calls,sites,on,17,1,1,4,4,0.000023
+returned closure,pool-1,on,8,3,2,2,5,0.000011
+returned closure,sites,off,4,1,1,4,4,0.000003
+returned closure,sites,on,4,1,1,2,2,0.000004
+nested application,pool-1,off,767,174,3,2,13,0.008606
+nested application,pool-1,on,661,68,3,2,13,0.010778
+nested application,sites,off,9,1,1,7,7,0.000012
+nested application,sites,on,9,1,1,3,3,0.000020
+omega,pool-1,off,27,0,0,2,7,0.000073
+omega,pool-1,on,27,0,0,2,7,0.000136
+omega,sites,off,16,0,0,9,9,0.000029
+omega,sites,on,13,0,0,3,3,0.000030
+repeated calls,sites,off,18,2,2,12,13,0.000023
+repeated calls,sites,on,17,1,1,4,4,0.000042
