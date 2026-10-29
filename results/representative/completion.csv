@@ -1,0 +1,11 @@
+allocation,gc,configurations,complete_configurations,complete_fraction,trials,complete_trials,state_limit_trials,cpu_limit_trials,wall_timeout_trials
+sites,false,12,12,1.000,36,36,0,0,0
+sites,true,12,12,1.000,36,36,0,0,0
+pool1,false,12,4,0.333,36,12,24,0,0
+pool1,true,12,4,0.333,36,12,24,0,0
+pool4,false,12,6,0.500,36,18,18,0,0
+pool4,true,12,8,0.667,36,24,12,0,0
+pool16,false,12,9,0.750,36,27,9,0,0
+pool16,true,12,12,1.000,36,36,0,0,0
+pool64,false,12,11,0.917,36,33,3,0,0
+pool64,true,12,11,0.917,36,33,3,0,0
