@@ -11,9 +11,10 @@ the recorded performance experiments.
 
 Run `dune build`, `dune runtest`, and `dune exec bin/main.exe`. The last command
 prints CSV; redirect it to a file to repeat the checked-in comparison in
-`results/allocation-comparison.csv`. Recorded on 12 October 2026 using OCaml
-4.14.1 and Dune 3.23.1 in Ubuntu WSL. These counts are deterministic; no runtime benchmark or
-cross-platform performance claim is included.
+`results/allocation-comparison.csv`. The current run's timestamp, toolchain,
+source identity, and CSV checksums are recorded in `results/milestone-metadata.json`.
+These counts are deterministic; no runtime benchmark or cross-platform
+performance claim is included.
 
 ## Executed checks
 
@@ -155,11 +156,19 @@ the clauses used in the proofs; it does not establish universal quantifiers.
 
 ## Representative experiment harness
 
-`test/experiment_checks.ml` compares all ten representative programs under site
+`test/experiment_checks.ml` compares all twelve representative programs under site
 allocation, with GC off/on, against the original complete analyzer. It checks
 explicit state/CPU cutoff statuses and completion of a graph exactly at its cap.
 The runner checks full pure concrete values against the independent reference
 and concrete final syntax inclusion in complete terminating analyses.
-[EXPERIMENTS.md](EXPERIMENTS.md) documents the 120 raw trials and separately
+[EXPERIMENTS.md](EXPERIMENTS.md) documents the 360 raw trials and separately
 reported precision, graph size, store peaks, and times. Interrupted searches
 are measured prefixes and do not inherit complete fixed-point guarantees.
+
+Small pooled graphs additionally agree with complete analysis for pool sizes
+1, 4, 16, and 64 with GC off/on. Python regression checks reject changed/added
+measurement sources, altered results, and modified artifact inventories; they
+also check portable line endings, repeatable ZIP creation, verification after
+extraction, and completion summaries with mixed trial outcomes. Run them with
+`python3 -m unittest discover -s test -p '*_checks.py' -v`. CI also verifies the
+checked-in provenance and artifact manifest without regenerating timings.

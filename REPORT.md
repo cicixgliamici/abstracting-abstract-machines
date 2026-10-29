@@ -12,7 +12,7 @@ and deterministic garbage collection.
 
 Validation combines generated terms, whole-state comparisons, local simulation,
 an independent capture-avoiding substitution evaluator, and an informal correctness
-argument. A reproducible ten-program experiment separates precision, state counts,
+argument. A reproducible twelve-program experiment separates precision, state counts,
 store footprint, and timing. Results expose allocation-dependent imprecision,
 benefits and limits of GC, and incomplete coarse-pool searches. The outcome is
 a reviewable implementation study with explicit boundaries on its claims.
@@ -120,7 +120,7 @@ documents the independence boundary.
 | State/control | 872 generated terms, 1-5 nodes, and 22 named examples; simulation and site fixed points |
 | Independent pure semantics | 4,034 closed terms, 1-8 nodes, 12 named examples, and 1,212 open substitution-law cases |
 | Invariant audit | 34 named entries and 154 tiny extended terms; support, roles, phases, fresh GC commutation, administrative descent |
-| Experiment search | Ten programs, sites with GC off/on; complete graphs agree with the original analyzer and cutoffs are explicit |
+| Experiment search | Twelve programs, sites with GC off/on and small graphs for pools 1/4/16/64; complete graphs agree with the original analyzer and cutoffs are explicit |
 
 Generated grammars and trace prefixes are bounded. Coverage overlaps across
 suites, so counts should not be summed as independent samples. Open substitution
@@ -144,12 +144,14 @@ independent extended-language oracle here.
 
 ## 5. Reproducible experiments and results
 
-The corpus combines identity pipelines and Church iteration of lengths two/four,
+The corpus combines identity pipelines and Church iteration of lengths two/four/eight,
 repeated closure calls, shared writes, old-closure environment restoration,
 continuation escape, multi-shot invocation, and omega. Each runs under sites and
-pool-one allocation, with GC off/on, in three fresh processes: 40 configurations
-and 120 trials. The harness records exact printed sources, toolchain/platform
-metadata, settings, Git state, and source hashes.
+pools of 1, 4, 16, and 64 addresses, with GC off/on, in three fresh processes:
+120 configurations and 360 trials. The harness records exact printed sources,
+toolchain/platform metadata, settings, Git state, and source/result hashes.
+`ARTIFACT.json` identifies the complete review payload independently of Git;
+`ARTIFACT.md` documents verification and packaging.
 
 Defaults cap exploration at 5,000 states or two CPU seconds, with a 15-second
 process watchdog. Every search reports completion or its cutoff. Interrupted
@@ -163,9 +165,10 @@ complete library analyzer retains its original unbounded contract.
 | Store footprint | Maximum addresses and storable alternatives in a reached state | Post-GC peaks; excludes transient stores and whole-process memory |
 | Timing | Median exploration CPU/wall seconds | Excludes startup, reference checks, compilation, summarization; cutoff time is not completion time |
 
-All 20 site configurations complete; 14 pool configurations hit the state cap.
-This exposes a scalability boundary under the chosen budget, not impossibility
-of completing those graphs with more resources. Selected complete site results:
+The completion table reports per-policy results under the same budget, requiring
+every repetition to finish before counting a configuration as complete. Partial
+graphs expose a budget boundary, not impossibility of completion with more
+resources. Selected complete site results:
 
 | Program | States, GC off / on | Extra final syntax, off / on | Peak store addresses, off / on |
 | --- | ---: | ---: | ---: |
@@ -180,7 +183,17 @@ syntaxes. Church iteration shows a smaller store without a smaller graph.
 Multi-shot invocation shows graph reduction while an extra result remains.
 These observations justify separating the metrics.
 
-Tiny runs and local medians do not establish general speedups. The older complete
+The expanded allocator comparison completes 89 of 120 configurations; the
+remaining 31 hit the state cap in every repetition. Sites complete 12/12 programs
+with GC off and on; pools 1, 4, 16, and 64 complete respectively 4/4, 6/8, 9/12,
+and 11/11 programs (off/on). Pool16 with GC completes `multi_shot` at 173 states,
+whereas pool64 reaches the cap; sites with GC need 96 states. Increasing the
+pool postpones saturation but does not guarantee smaller graphs or completion.
+For `church_8`, sites and pool64 both have 48 states; pool16 with GC needs 965
+and retains two extra final syntaxes. These comparisons expose intermediate
+allocation effects beyond the deliberately extreme one-cell baseline.
+
+Tiny runs and local medians do not establish general speedups. The separate complete
 pool-one baseline also illustrates allocation imprecision: lexical capture has
 11,891 states and four final lambda syntaxes, versus eight states and one syntax
 under sites. That separate protocol must not be merged with capped experiments

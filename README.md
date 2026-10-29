@@ -69,12 +69,38 @@ Experiments remain a separate manual step because their timings depend on the
 host. Exact compiler/Dune versions make the review toolchain repeatable; this
 does not freeze Ubuntu packages, opam repository metadata, or benchmark timings.
 
-The Python command regenerates ten programs, 40 configurations, 120 raw trials,
-four separate tables, and toolchain/source metadata in
+The Python command regenerates twelve programs, 120 configurations, 360 raw trials,
+four measurement tables, a completion table, and toolchain/source metadata in
 [`results/representative/`](results/representative/tables.md). It uses explicit
 state, CPU, and wall limits and marks interrupted searches as incomplete.
 [EXPERIMENTS.md](EXPERIMENTS.md) explains the measurements and configuration flags.
 Programs are OCaml ASTs; there is no source parser or file-input CLI.
+
+## Identifiable review artifact
+
+[`VERSION`](VERSION) names the review series. [`ARTIFACT.json`](ARTIFACT.json)
+identifies the exact source/documentation/result payload with SHA-256 checksums;
+the identity is independent of whether the working tree has been committed.
+The archive includes sources, tests, CI, documentation, the supplied paper, and
+all checked-in results, but excludes Git history, switches, and build output.
+
+```sh
+python3 scripts/run_experiments.py --verify
+python3 scripts/artifact.py --verify
+```
+
+To regenerate all measurements and then produce a shareable archive:
+
+```sh
+opam exec -- python3 scripts/run_experiments.py --milestones
+python3 scripts/artifact.py
+```
+
+The ZIP and its external SHA-256 file are written to ignored `artifacts/`.
+After extraction, run `python3 scripts/artifact.py --verify` before following
+the local-switch setup above. Archive contents use LF text line endings on all
+platforms. The checksum establishes payload identity, not authorship or a formal
+correctness certificate. [ARTIFACT.md](ARTIFACT.md) explains verification and updates.
 
 The smaller milestone comparisons remain available:
 
@@ -135,11 +161,15 @@ GC, mutation/control, and independent pure evaluation. The reference suite check
 4,034 generated closed terms and 1,212 open substitution-law cases. The informal
 proof chapter states mathematical assumptions separately from bounded tests.
 
-In the representative results, site allocation completes all 20 configurations.
-Fourteen pool configurations hit the state cap. GC reduces shared-write states
+The representative comparison includes sites and pools of 1, 4, 16, and 64
+addresses, with GC off/on and pipeline/Church sizes 2, 4, and 8. The
+[completion table](results/representative/completion.csv) reports how many
+configurations finish under the shared resource budget. GC reduces shared-write states
 from 85 to 33 and multi-shot continuation states from 736 to 96; it does not
 remove every spurious result. Results distinguish precision proxies, graph size,
 store footprint, and timing rather than treating one as evidence for another.
+In this run, sites and pool16 with GC complete all twelve programs; pool64
+completes eleven. Increasing a pool is therefore not a guarantee of completion.
 
 Printed final-value syntax omits closure environments and continuation identity.
 Fuel exhaustion does not establish divergence, and an abstract final state does

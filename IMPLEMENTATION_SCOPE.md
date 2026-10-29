@@ -39,8 +39,12 @@
   GC preservation/simulation, and finite worklist correctness.
 - Invariant audit on 34 named entries and 154 tiny extended terms, covering live
   edge support, roles, counters, concrete GC commutation, and administrative descent.
-- Ten representative programs, 40 configurations, and 120 raw trials regenerated
+- Twelve representative programs, 120 configurations, and 360 raw trials regenerated
   by a standard-library Python harness, with source hashes and environment metadata.
+- Sites and pools of 1/4/16/64 addresses, pipeline/Church sizes 2/4/8, and explicit
+  per-policy completion rates under equal budgets.
+- Content-addressed review archive and manifest with source/result provenance
+  verification, independent of a dirty or missing Git checkout.
 - Separate precision, graph-size, store-footprint, and CPU/wall timing tables;
   bounded experimental searches report cutoffs and omit incomplete precision.
 - A consolidated implementation report in [REPORT.md](REPORT.md) and reviewer

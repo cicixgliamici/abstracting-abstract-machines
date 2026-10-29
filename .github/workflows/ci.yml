@@ -46,3 +46,9 @@ jobs:
 
       - name: Run all tests
         run: opam exec -- dune runtest --force
+
+      - name: Check artifact tooling and recorded provenance
+        run: |
+          python3 -m unittest discover -s test -p '*_checks.py' -v
+          python3 scripts/run_experiments.py --verify
+          python3 scripts/artifact.py --verify

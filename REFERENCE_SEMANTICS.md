@@ -110,8 +110,8 @@ dune runtest
 dune exec bin/reference_comparison.exe > results/reference-comparison.csv
 ```
 
-The CSV was recorded on 12 October 2026 using OCaml 4.14.1 and Dune 3.23.1 in
-Ubuntu WSL. Named runs use 100 reference reductions and 400 transitions per
+The CSV's current timestamp, source identity, toolchain, and checksum are recorded
+in `results/milestone-metadata.json`. Named runs use 100 reference reductions and 400 transitions per
 machine. Incomplete runs have no final-value agreement claim.
 
 | Example | Reference reductions | CEK transitions | Reified value agreement |

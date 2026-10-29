@@ -81,8 +81,8 @@ dune runtest
 dune exec bin/gc_comparison.exe > results/gc-comparison.csv
 ```
 
-The recorded CSV was produced on 12 October 2026 with OCaml 4.14.1 and Dune
-3.23.1 in Ubuntu WSL. Each configuration runs three times; the CPU column is
+The current CSV's timestamp, source identity, and OCaml/Dune versions are recorded
+in `results/milestone-metadata.json`. Each configuration runs three times; the CPU column is
 the median of `Sys.time` durations for reachability exploration, including the
 analyzer's collector and OCaml runtime GC during exploration. Summary calculation
 and a preparatory OCaml full collection are outside the timed interval. These
@@ -116,11 +116,11 @@ cannot safely discard individual alternatives there. It reduces some history
 and final-state counts without improving final-term precision in these cases.
 For already precise site-based examples, it mainly reduces stored cells.
 
-Timing is mixed: pooled lexical capture takes median CPU seconds 0.654629
-without GC and 0.623244 with GC; pooled nested application takes 0.013485 and
-0.015448. GC's traversal has a cost and fewer states do not guarantee a faster
-analysis. Tiny site-based runs take only microseconds, so their timing should
-not be interpreted as reliable speedup ratios.
+Consult the regenerated CSV for current median CPU times. GC's traversal has a
+cost and fewer states do not guarantee a faster analysis. Tiny site-based runs
+take only microseconds, so their timing should not be interpreted as reliable
+speedup ratios. The source/result checksums identify this protocol separately
+from the capped representative experiment.
 
 Peak address/value counts range over reached states, so collected runs report
 post-collection stores. They omit temporary pre-collection stores, retained

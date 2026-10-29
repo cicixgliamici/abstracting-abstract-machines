@@ -144,9 +144,9 @@ stuck states, peak reached-store addresses, and possible printed final values.
 The two earlier CSVs remain pure-language baselines; new summaries use value
 syntax instead of the older lambda-only column name.
 
-Recorded on 12 October 2026 using OCaml 4.14.1 and Dune 3.23.1 in Ubuntu WSL.
-The 22 examples produce 44 paired configurations. The pure-language allocation
-CSV was regenerated separately and matches the earlier baseline exactly.
+The current run's timestamp, source identity, toolchain, and CSV checksum are
+recorded in `results/milestone-metadata.json`. The 22 examples produce 44 paired
+configurations; this complete protocol remains separate from capped experiments.
 
 | Example | Concrete result | States GC off / on | Possible final syntax GC off / on |
 | --- | --- | ---: | ---: |
