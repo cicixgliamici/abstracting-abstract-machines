@@ -4,6 +4,15 @@ module Machine = Store_machine
 let require condition message = if not condition then failwith message
 
 let run () =
+  (* Small complete graphs isolate pool-policy correctness from resource limits
+     in the larger benchmark corpus. GC must preserve each policy's graph. *)
+  List.iter (fun size -> List.iter (fun gc ->
+    let policy = Machine.Bounded size in
+    let status, reached = Experiment_analysis.explore policy gc 5000 30.
+      Examples.identity_application in
+    let expected = Machine.analyze ~policy ~gc Examples.identity_application in
+    require (status = "complete" && Machine.States.equal reached expected)
+      "Pooled explorer must agree with complete analysis") [false; true]) [1; 4; 16; 64];
   List.iter (fun benchmark -> List.iter (fun gc ->
     let status, reached = Experiment_analysis.explore Machine.Site_based gc 5000 30.
       benchmark.Experiment_examples.program in

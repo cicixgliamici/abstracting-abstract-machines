@@ -1,0 +1,4 @@
+# Keep artifact text identical across Windows checkouts and Linux CI.
+* text=auto eol=lf
+*.pdf binary
+*.zip binary

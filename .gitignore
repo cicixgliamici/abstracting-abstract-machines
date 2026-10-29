@@ -5,3 +5,6 @@ _opam/
 *.cmo
 *.exe
 tmp/
+# Review archives are generated from the checked-in artifact manifest.
+artifacts/
+__pycache__/

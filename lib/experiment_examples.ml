@@ -34,8 +34,10 @@ let shared_writes =
 let all = [
   { name = "pipeline_2"; family = "closure reuse"; program = identity_pipeline 2 };
   { name = "pipeline_4"; family = "closure reuse"; program = identity_pipeline 4 };
+  { name = "pipeline_8"; family = "closure reuse"; program = identity_pipeline 8 };
   { name = "church_2"; family = "higher-order iteration"; program = church_iteration 2 };
   { name = "church_4"; family = "higher-order iteration"; program = church_iteration 4 };
+  { name = "church_8"; family = "higher-order iteration"; program = church_iteration 8 };
   { name = "repeated_calls"; family = "closure reuse"; program = Examples.repeated_calls };
   { name = "shared_writes"; family = "mutation"; program = shared_writes };
   { name = "old_closure_environment"; family = "mutation";

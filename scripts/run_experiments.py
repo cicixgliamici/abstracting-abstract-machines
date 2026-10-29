@@ -2,7 +2,6 @@
 
 import argparse
 import csv
-import hashlib
 import io
 import json
 import platform
@@ -11,6 +10,7 @@ import statistics
 import subprocess
 import sys
 from datetime import datetime, timezone
+from artifact import digest, hashes, measurement_sources, verify_provenance
 
 ROOT = Path(__file__).resolve().parents[1]
 FIELDS = ["example", "allocation", "gc", "status", "concrete_outcome",
@@ -30,19 +30,36 @@ def write_csv(path, fields, rows):
         writer.writerows(rows)
 
 
-def fingerprints():
-    # Hash the sources and harness, because a dirty commit alone is ambiguous.
-    paths = [ROOT / "dune-project", ROOT / "scripts/run_experiments.py"]
-    for directory in ("lib", "bin"):
-        paths.extend(path for path in (ROOT / directory).rglob("*") if path.is_file())
-    return {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
-            for path in sorted(paths)}
+def git_context():
+    # An extracted review archive is independently identifiable without .git.
+    try:
+        if Path(command("git", "rev-parse", "--show-toplevel")).resolve() != ROOT:
+            return {"git_revision": None, "git_status": None}
+        return {"git_revision": command("git", "rev-parse", "HEAD"),
+                "git_status": command("git", "status", "--short")}
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return {"git_revision": None, "git_status": None}
+
+
+def metadata(sources, paths, options):
+    if measurement_sources() != sources:
+        raise RuntimeError("Measurement sources changed during the run; discard these results")
+    return {"utc": datetime.now(timezone.utc).isoformat(), "configuration": vars(options),
+            "artifact_version": (ROOT / "VERSION").read_text().strip(),
+            "platform": platform.platform(), "python": sys.version,
+            "ocaml": command("ocamlc", "-version"), "dune": command("dune", "--version"),
+            **git_context(), "source_sha256": sources, "source_snapshot_sha256": digest(sources),
+            "result_sha256": hashes(paths)}
+
+
+def write_json(path, value):
+    path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
 
 
 def trials(binary, catalog, options):
     rows = []
     for example in catalog:
-        for allocation in ("sites", "pool1"):
+        for allocation in options.allocators:
             for gc in ("false", "true"):
                 for trial in range(1, options.repetitions + 1):
                     arguments = [str(binary), example["example"], allocation, gc,
@@ -102,15 +119,72 @@ def tables(rows, output):
     (output / "tables.md").write_text("\n".join(sections), encoding="utf-8")
 
 
+def completion_table(rows, output):
+    # Report trial and configuration completion separately; mixed repetitions
+    # must never turn a partially explored configuration into a completed one.
+    fields = ["allocation", "gc", "configurations", "complete_configurations",
+              "complete_fraction", "trials", "complete_trials", "state_limit_trials",
+              "cpu_limit_trials", "wall_timeout_trials"]
+    summaries = []
+    for allocation, gc in dict.fromkeys((row["allocation"], row["gc"]) for row in rows):
+        samples = [row for row in rows if (row["allocation"], row["gc"]) == (allocation, gc)]
+        names = set(row["example"] for row in samples)
+        complete = sum(all(row["status"] == "complete" for row in samples if row["example"] == name)
+                       for name in names)
+        summary = dict(allocation=allocation, gc=gc, configurations=len(names),
+                       complete_configurations=complete, complete_fraction=f"{complete / len(names):.3f}",
+                       trials=len(samples))
+        for status in ("complete", "state_limit", "cpu_limit", "wall_timeout"):
+            summary[f"{status}_trials"] = sum(row["status"] == status for row in samples)
+        summaries.append(summary)
+    write_csv(output / "completion.csv", fields, summaries)
+    with (output / "tables.md").open("a", encoding="utf-8") as table:
+        table.write("\n## Completion\n\n| " + " | ".join(fields) + " |\n")
+        table.write("| " + " | ".join("---" for _ in fields) + " |\n")
+        for row in summaries:
+            table.write("| " + " | ".join(str(row[field]) for field in fields) + " |\n")
+
+
+def regenerate_milestones(options, sources):
+    paths = []
+    for executable, filename in (("main", "allocation"), ("gc_comparison", "gc"),
+                                 ("section3_comparison", "section3"),
+                                 ("reference_comparison", "reference")):
+        path = ROOT / "results" / f"{filename}-comparison.csv"
+        # Each milestone keeps its documented protocol, separate from capped runs.
+        subprocess.run(["dune", "build", f"bin/{executable}.exe"], cwd=ROOT, check=True)
+        with path.open("w", encoding="utf-8", newline="") as output:
+            subprocess.run([str(ROOT / f"_build/default/bin/{executable}.exe")],
+                           cwd=ROOT, stdout=output, check=True)
+        paths.append(path)
+        print(f"Regenerated {path.name}", flush=True)
+    record = metadata(sources, paths, options)
+    record["protocol"] = "Separate complete milestone comparisons; see VALIDATION.md and companion documents"
+    write_json(ROOT / "results/milestone-metadata.json", record)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repetitions", type=int, default=3)
     parser.add_argument("--max-states", type=int, default=5000)
     parser.add_argument("--cpu-limit", type=float, default=2.0)
     parser.add_argument("--wall-limit", type=float, default=15.0)
+    parser.add_argument("--allocators", nargs="+", default=["sites", "pool1", "pool4", "pool16", "pool64"])
+    parser.add_argument("--milestones", action="store_true", help="Also regenerate the four legacy comparisons")
+    parser.add_argument("--verify", action="store_true", help="Check source/result provenance without rerunning")
     options = parser.parse_args()
+    if options.verify:
+        verify_provenance(ROOT)
+        print("Source snapshots and result checksums verified")
+        return
     if min(options.repetitions, options.max_states, options.cpu_limit, options.wall_limit) <= 0:
         parser.error("All limits and repetitions must be positive")
+    for name in options.allocators:
+        if name != "sites" and not (name.startswith("pool") and name[4:].isdigit() and int(name[4:]) > 0):
+            parser.error("Allocators must be sites or poolN with positive N")
+    if len(set(options.allocators)) != len(options.allocators):
+        parser.error("Allocators must not be repeated")
+    sources = measurement_sources()
     subprocess.run(["dune", "build", "bin/experiments.exe"], cwd=ROOT, check=True)
     binary = ROOT / "_build/default/bin/experiments.exe"
     catalog = list(csv.DictReader(io.StringIO(command(str(binary), "--catalog")),
@@ -121,15 +195,14 @@ def main():
     rows = trials(binary, catalog, options)
     write_csv(output / "raw.csv", ["trial"] + FIELDS, rows)
     tables(rows, output)
-    metadata = {"utc": datetime.now(timezone.utc).isoformat(), "configuration": vars(options),
-                "platform": platform.platform(), "python": sys.version,
-                "ocaml": command("ocamlc", "-version"), "dune": command("dune", "--version"),
-                "git_revision": command("git", "rev-parse", "HEAD"),
-                "git_status": command("git", "status", "--short"),
-                "source_sha256": fingerprints(),
-                "timing_scope": "Explorer only; excludes concrete/reference checks and metric summarization",
-                "clock": "Sys.time CPU; Unix.gettimeofday wall; no warm-up; fresh process per trial"}
-    (output / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
+    completion_table(rows, output)
+    paths = [path for path in output.iterdir() if path.is_file() and path.name != "metadata.json"]
+    record = metadata(sources, paths, options)
+    record.update(timing_scope="Explorer only; excludes concrete/reference checks and metric summarization",
+                  clock="Sys.time CPU; Unix.gettimeofday wall; no warm-up; fresh process per trial")
+    write_json(output / "metadata.json", record)
+    if options.milestones:
+        regenerate_milestones(options, sources)
 
 
 if __name__ == "__main__":

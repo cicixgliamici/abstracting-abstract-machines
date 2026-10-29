@@ -3,6 +3,15 @@ module Machine = Store_machine
 
 let explore = Experiment_analysis.explore
 
+let allocation_policy name =
+  if name = "sites" then Machine.Site_based
+  else if String.starts_with ~prefix:"pool" name then
+    let size = int_of_string (String.sub name 4 (String.length name - 4)) in
+    let policy = Machine.Bounded size in
+    Machine.validate_policy policy;
+    policy
+  else invalid_arg "Expected sites or poolN with positive N"
+
 let csv value = "\"" ^ String.concat "\"\"" (String.split_on_char '"' value) ^ "\""
 
 let concrete_result program =
@@ -12,9 +21,7 @@ let concrete_result program =
   | Machine.Fuel_exhausted _ -> "fuel_exhausted", ""
 
 let run benchmark policy_name gc max_states cpu_limit =
-  let policy = match policy_name with
-    | "sites" -> Machine.Site_based | "pool1" -> Machine.Bounded 1
-    | _ -> invalid_arg "Expected sites or pool1" in
+  let policy = allocation_policy policy_name in
   let outcome, expected = concrete_result benchmark.Experiment_examples.program in
   (* The independent substitution semantics checks full pure values, including
      captured environments; the reported precision metric remains only syntax. *)
@@ -55,4 +62,4 @@ let () =
     let max_states = int_of_string Sys.argv.(4) and cpu_limit = float_of_string Sys.argv.(5) in
     if max_states < 1 || cpu_limit <= 0. then invalid_arg "Limits must be positive";
     run benchmark Sys.argv.(2) (bool_of_string Sys.argv.(3)) max_states cpu_limit
-  end else invalid_arg "Usage: experiments NAME sites|pool1 true|false MAX_STATES CPU_SECONDS"
+  end else invalid_arg "Usage: experiments NAME sites|poolN true|false MAX_STATES CPU_SECONDS"
