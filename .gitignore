@@ -1,4 +1,6 @@
 _build/
+# Local opam switches contain machine-specific compiler and dependency files.
+_opam/
 *.cmi
 *.cmo
 *.exe

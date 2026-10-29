@@ -14,21 +14,60 @@ the paper. [REPORT.md](REPORT.md) presents the study and its boundaries.
 
 ## Build, verify, reproduce
 
-Requirements: OCaml 4.13+, Dune 2.9+, and Python 3.8+ for experiments. The OCaml
-implementation uses only standard libraries. The recorded toolchain is OCaml
-4.14.1, Dune 3.23.1, and Python 3.12.3 in Ubuntu WSL.
+The review environment fixes OCaml **4.14.1** and Dune **3.23.1** in
+[`abstracting_abstract_machines.opam`](abstracting_abstract_machines.opam).
+The OCaml implementation uses only standard libraries. Python 3.8+ is needed
+only to regenerate experiments; the recorded experiments used Python 3.12.3.
+
+On Ubuntu (including Ubuntu under WSL), install opam and compiler prerequisites:
 
 ```sh
-dune build
-dune runtest
-python3 scripts/run_experiments.py
+sudo apt-get update
+sudo apt-get install -y opam build-essential m4 pkg-config unzip bubblewrap git
+opam init --bare --no-setup
 ```
 
-Run from the repository root. On Windows with Ubuntu WSL:
+Run `opam init` only when opam has not already been initialized. From a fresh
+checkout, create an isolated local switch and install the declared dependencies:
+
+```sh
+git clone https://github.com/cicixgliamici/abstracting-abstract-machines.git
+cd abstracting-abstract-machines
+opam update
+opam switch create . ocaml-base-compiler.4.14.1 --no-install
+opam install . --deps-only --with-test --yes
+opam exec -- ocamlc -version
+opam exec -- dune --version
+opam exec -- dune build @all
+opam exec -- dune runtest --force
+```
+
+The version commands should print `4.14.1` and `3.23.1`. The local switch is
+stored in ignored `_opam/`; `opam exec --` selects it without changing shell
+startup files. For an existing checkout, start at `opam switch create`; if its
+local switch already exists, skip creation and reinstall dependencies instead.
+
+To regenerate experiments, install Python separately and use the same switch:
+
+```sh
+sudo apt-get install -y python3
+opam exec -- python3 scripts/run_experiments.py
+```
+
+On Windows, run the setup above inside an Ubuntu WSL terminal. After setup,
+build and test from PowerShell with the actual path of your checkout:
 
 ```powershell
-wsl -d Ubuntu -- bash -lc 'cd /mnt/c/Progetti/abstracting-abstract-machines && dune build && dune runtest && python3 scripts/run_experiments.py'
+wsl -d Ubuntu -- bash -lc 'cd /mnt/c/Progetti/abstracting-abstract-machines && opam exec -- dune build @all && opam exec -- dune runtest --force'
 ```
+
+The [CI workflow](.github/workflows/ci.yml) runs on pushes, pull requests, and
+manual dispatches using Ubuntu 24.04 and the same compiler and dependency file.
+Each job starts from a clean checkout, disables the setup action's opam cache,
+clears Dune build output, builds all targets, and forces the complete test suite.
+Experiments remain a separate manual step because their timings depend on the
+host. Exact compiler/Dune versions make the review toolchain repeatable; this
+does not freeze Ubuntu packages, opam repository metadata, or benchmark timings.
 
 The Python command regenerates ten programs, 40 configurations, 120 raw trials,
 four separate tables, and toolchain/source metadata in
@@ -40,10 +79,10 @@ Programs are OCaml ASTs; there is no source parser or file-input CLI.
 The smaller milestone comparisons remain available:
 
 ```sh
-dune exec bin/main.exe
-dune exec bin/gc_comparison.exe
-dune exec bin/section3_comparison.exe
-dune exec bin/reference_comparison.exe
+opam exec -- dune exec bin/main.exe
+opam exec -- dune exec bin/gc_comparison.exe
+opam exec -- dune exec bin/section3_comparison.exe
+opam exec -- dune exec bin/reference_comparison.exe
 ```
 
 Each prints CSV to standard output. These comparisons use their documented

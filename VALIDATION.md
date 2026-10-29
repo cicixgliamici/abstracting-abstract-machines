@@ -2,6 +2,13 @@
 
 ## Scope and reproducibility
 
+The pinned review toolchain and fresh-checkout setup are documented in
+[README.md](README.md#build-verify-reproduce). The package file fixes OCaml
+4.14.1 and Dune 3.23.1. GitHub Actions runs a clean build and the full test suite
+on Ubuntu 24.04 without an opam or Dune build cache, using that same package file.
+This workflow checks compilation and semantic validation; it does not regenerate
+the recorded performance experiments.
+
 Run `dune build`, `dune runtest`, and `dune exec bin/main.exe`. The last command
 prints CSV; redirect it to a file to repeat the checked-in comparison in
 `results/allocation-comparison.csv`. Recorded on 12 October 2026 using OCaml

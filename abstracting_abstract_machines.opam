@@ -1,0 +1,24 @@
+opam-version: "2.0"
+maintainer: "Leonardo Chiaretti <leonardo.chiaretti@studio.unibo.it>"
+authors: "Leonardo Chiaretti"
+synopsis: "An implementation study of Abstracting Abstract Machines"
+description: """
+Concrete CEK and store-allocated evaluation, finite-address analysis,
+garbage collection, independent pure semantics, and generated validation.
+This package describes the repository's reproducible review environment.
+"""
+homepage: "https://github.com/cicixgliamici/abstracting-abstract-machines"
+bug-reports: "https://github.com/cicixgliamici/abstracting-abstract-machines/issues"
+dev-repo: "git+https://github.com/cicixgliamici/abstracting-abstract-machines.git"
+# Exact versions reproduce the toolchain used for the recorded experiments.
+depends: [
+  "ocaml" {= "4.14.1"}
+  "dune" {= "3.23.1"}
+]
+# The project is reviewed in place; it does not install a public library or CLI.
+build: [
+  ["dune" "build" "@all" "-j" jobs]
+]
+run-test: [
+  ["dune" "runtest" "--force" "-j" jobs]
+]
