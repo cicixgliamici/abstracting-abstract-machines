@@ -18,7 +18,8 @@ The command builds the executable and regenerates `results/representative/`:
 `metadata.json`. Metadata records configuration, tool versions, platform, UTC
 timestamp, Git revision/status when available, and SHA-256 hashes of all
 measurement sources and generated outputs. `--milestones` also regenerates the
-four separate milestone CSVs and their own `results/milestone-metadata.json`.
+four separate milestone CSVs, the generated `results/guided-example.md` trace,
+and their own `results/milestone-metadata.json`.
 It retains their existing complete-analysis protocols, not the capped protocol.
 Source hashes identify dirty or untracked implementations as well as committed
 ones. Outputs are overwritten; save a separate copy to compare runs. Run

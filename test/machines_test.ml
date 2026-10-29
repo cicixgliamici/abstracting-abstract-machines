@@ -154,4 +154,5 @@ let () =
   Section3_checks.run ();
   Reference_checks.run ();
   Invariant_checks.run ();
-  Experiment_checks.run ()
+  Experiment_checks.run ();
+  Guided_example_checks.run ()

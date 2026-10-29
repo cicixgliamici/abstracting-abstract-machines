@@ -118,6 +118,11 @@ representative experiment rather than sharing its limits or timing protocol.
 
 ## Reading route for reviewers
 
+Start with [WALKTHROUGH.md](WALKTHROUGH.md) for a worked CEK trace and the exact
+lookup where address reuse introduces two abstract successors. Run
+`opam exec -- dune exec bin/guided_example.exe` to reproduce the
+[generated trace](results/guided-example.md), including the effect of GC.
+
 | Read | Purpose |
 | --- | --- |
 | [REPORT.md](REPORT.md) | Research question, implementation, evidence, results, and limitations |
@@ -139,6 +144,7 @@ The source reference is the supplied [paper PDF](<Abstracting Abstract Machines.
 | --- | --- |
 | Syntax, labels, free variables | [lib/syntax.ml](lib/syntax.ml) |
 | Pure concrete CEK | [lib/cek.ml](lib/cek.ml) |
+| Guided CEK/abstract branching example | [WALKTHROUGH.md](WALKTHROUGH.md), [bin/guided_example.ml](bin/guided_example.ml) |
 | Fresh/finite store machines, abstraction, GC, complete worklist | [lib/store_machine.ml](lib/store_machine.ml) |
 | Independent pure reduction and closure reification | [lib/reference_semantics.ml](lib/reference_semantics.ml), [lib/closure_reification.ml](lib/closure_reification.ml) |
 | Bounded experiment search and corpus | [lib/experiment_analysis.ml](lib/experiment_analysis.ml), [lib/experiment_examples.ml](lib/experiment_examples.ml) |

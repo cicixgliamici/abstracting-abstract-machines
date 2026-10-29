@@ -172,3 +172,13 @@ also check portable line endings, repeatable ZIP creation, verification after
 extraction, and completion summaries with mixed trial outcomes. Run them with
 `python3 -m unittest discover -s test -p '*_checks.py' -v`. CI also verifies the
 checked-in provenance and artifact manifest without regenerating timings.
+
+## Guided example
+
+`test/guided_example_checks.ml` exercises the repeated-call walkthrough against
+the independent pure reference, checks the shared binding and both reachable
+final successors with their captured environments, and verifies singleton
+parameter lookups and the unique final syntax with GC. The renderer uses the
+production machines; it does not duplicate their rules. `--milestones` also
+regenerates `results/guided-example.md` and records its checksum alongside the
+four comparison CSVs. [WALKTHROUGH.md](WALKTHROUGH.md) explains every phase.

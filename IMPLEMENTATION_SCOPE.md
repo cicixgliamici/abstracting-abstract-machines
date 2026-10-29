@@ -49,6 +49,9 @@
   bounded experimental searches report cutoffs and omit incomplete precision.
 - A consolidated implementation report in [REPORT.md](REPORT.md) and reviewer
   reading/source routes in [README.md](README.md).
+- An executable guided example with the full CEK trace, the first site-based
+  abstract choice, and the GC precision gain, explained in `WALKTHROUGH.md` and
+  checked against independent evaluation and actual closure alternatives.
 
 Concrete execution reports fuel exhaustion separately from successful evaluation.
 Fuel exhaustion does not prove divergence. The library `Store_machine.analyze`

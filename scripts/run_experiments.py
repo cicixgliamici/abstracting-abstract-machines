@@ -147,10 +147,12 @@ def completion_table(rows, output):
 
 def regenerate_milestones(options, sources):
     paths = []
-    for executable, filename in (("main", "allocation"), ("gc_comparison", "gc"),
-                                 ("section3_comparison", "section3"),
-                                 ("reference_comparison", "reference")):
-        path = ROOT / "results" / f"{filename}-comparison.csv"
+    for executable, filename in (("main", "allocation-comparison.csv"),
+                                 ("gc_comparison", "gc-comparison.csv"),
+                                 ("section3_comparison", "section3-comparison.csv"),
+                                 ("reference_comparison", "reference-comparison.csv"),
+                                 ("guided_example", "guided-example.md")):
+        path = ROOT / "results" / filename
         # Each milestone keeps its documented protocol, separate from capped runs.
         subprocess.run(["dune", "build", f"bin/{executable}.exe"], cwd=ROOT, check=True)
         with path.open("w", encoding="utf-8", newline="") as output:
@@ -159,7 +161,7 @@ def regenerate_milestones(options, sources):
         paths.append(path)
         print(f"Regenerated {path.name}", flush=True)
     record = metadata(sources, paths, options)
-    record["protocol"] = "Separate complete milestone comparisons; see VALIDATION.md and companion documents"
+    record["protocol"] = "Separate complete milestone comparisons and deterministic guided trace; see VALIDATION.md"
     write_json(ROOT / "results/milestone-metadata.json", record)
 
 
@@ -170,7 +172,7 @@ def main():
     parser.add_argument("--cpu-limit", type=float, default=2.0)
     parser.add_argument("--wall-limit", type=float, default=15.0)
     parser.add_argument("--allocators", nargs="+", default=["sites", "pool1", "pool4", "pool16", "pool64"])
-    parser.add_argument("--milestones", action="store_true", help="Also regenerate the four legacy comparisons")
+    parser.add_argument("--milestones", action="store_true", help="Also regenerate the four comparisons and guided trace")
     parser.add_argument("--verify", action="store_true", help="Check source/result provenance without rerunning")
     options = parser.parse_args()
     if options.verify:
