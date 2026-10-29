@@ -1,5 +1,5 @@
 {
-  "utc": "2026-10-29T13:38:53.027281+00:00",
+  "utc": "2026-10-29T13:52:18.518843+00:00",
   "configuration": {
     "repetitions": 3,
     "max_states": 5000,
@@ -20,8 +20,8 @@
   "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
   "ocaml": "4.14.1",
   "dune": "3.23.1",
-  "git_revision": "a41b7bb37db1da04d05dc2859ff3b9610e3d7352",
-  "git_status": "M ARTIFACT.md\n M EXPERIMENTS.md\n M IMPLEMENTATION_SCOPE.md\n M README.md\n M VALIDATION.md\n M bin/dune\n M results/representative/raw.csv\n M results/representative/tables.md\n M results/representative/timing.csv\n M scripts/run_experiments.py\n M test/machines_test.ml\n?? WALKTHROUGH.md\n?? bin/guided_example.ml\n?? lib/guided_example.ml\n?? lib/guided_example.mli\n?? test/guided_example_checks.ml",
+  "git_revision": "781962c4484080de3a3289b72b62777937828687",
+  "git_status": "M IMPLEMENTATION_SCOPE.md\n M README.md\n M VALIDATION.md\n M results/representative/raw.csv\n M results/representative/tables.md\n M results/representative/timing.csv\n?? API.md\n?? lib/cek.mli\n?? lib/store_machine.mli\n?? lib/syntax.mli",
   "source_sha256": {
     ".gitattributes": "beefa6c7d1d8f8efff75da70ff0412f894da1f19fe558e82487968eab2fe0c92",
     ".github/workflows/ci.yml": "20a15366630a90ca3819e323a748d685c976a41f1a7c57cfca2cde3b17dc53ca",
@@ -38,6 +38,7 @@
     "dune-project": "6443ce5df77ddd778b7a63b845004556130c24a94c07326655ceb7b6a26b3f19",
     "lib/analysis_metrics.ml": "16be60552fb4c948d4cccf66262ea75001ac2c38b683479530ab4084ec0c81f4",
     "lib/cek.ml": "683a294ecfa4b44d0f36981bb521a0701554e6af898adafec1125b94c00668e7",
+    "lib/cek.mli": "6553bf8d8f0a99f9fb01bd16582b47a3f50faaaec9f04f716c03cbc01f249575",
     "lib/closure_reification.ml": "28650262eb4b49d1976fd4a241c2a351473d0741c75fff00e3293c28d5e92384",
     "lib/closure_reification.mli": "3b7f6a7187ccb70fc1ca3202ca806969851f5db0976da10a9f4e27388103d9e7",
     "lib/dune": "de224202fbde187e4fba4fb813dff0d96f820db9df7520a607656edef2420ef4",
@@ -51,7 +52,9 @@
     "lib/reference_semantics.ml": "c0966f32fdd5dfc5974641a343c8c60ec614f0eca1204a8db130027346951998",
     "lib/reference_semantics.mli": "d9f321716cdcab1ce8eb81db3f6005d9cdfdccbc4f1424e5313539afcd830c0e",
     "lib/store_machine.ml": "7ca55ca138491940868359191c2b1658bbaaefbce0191c0b5fd6bb1f7ca4428c",
+    "lib/store_machine.mli": "aaf2c1c51257333bdedceb434120f97ccacd74ec078e1f51118c6baecaf425d8",
     "lib/syntax.ml": "a92fff32bd39addd4c7192eb85c13520e486ffc8ffb1193d01aab39c27b17b4a",
+    "lib/syntax.mli": "fbace3d9d94291be47371c7b0c1c3f3ea10e821cb629e69fcb8171e4ebb8dbba",
     "scripts/artifact.py": "be9aa81ff30c54c304bd106f33144584e435e931cc1ad791914d62024ff004cb",
     "scripts/run_experiments.py": "6394d0741e1240ee0869235b994d1b8dcfee2fc5d8dcb12403de1673c74a2f4d",
     "test/artifact_checks.py": "7e185f1d25a14a6bbff86e64c3da6ac59dc576ddb2b7296c1d8ddce911293656",
@@ -67,16 +70,16 @@
     "test/reference_checks.ml": "83fe03931693401172c3f80bdec4d37444275add78cb3d8a8eecbeede894d7ee",
     "test/section3_checks.ml": "4d5d1bb78ab3a83371e5bacd9d1a3c710e930d4cf08026928b20b97eeee54f8f"
   },
-  "source_snapshot_sha256": "b020a71af2bb2ec7ba93dc0c3db79eaba782ea770f169ce110c51cf9cac90242",
+  "source_snapshot_sha256": "a3bccdec3ed75f4b4a6041b95182922ca25f580785d0236ba05c328e471b2d19",
   "result_sha256": {
     "results/representative/completion.csv": "41c1f4bcd5f5fc03663c9a68d39d49be3da83cdef247335f7d486425a43b8ce0",
     "results/representative/precision.csv": "7efc36451ef75a579144bb2624f13f7e7c28b2c71906378ffd677da5be808d5c",
     "results/representative/programs.csv": "827465840055ba12b263ed09303174edd5c03743ec6f1654da77590fc8d04919",
-    "results/representative/raw.csv": "7d388a9b17184ab9e9969cbce6f2f0af058555c8787599b2632303e341561f4a",
+    "results/representative/raw.csv": "11a869ae0c5571530266c356315063b0617d2a20fe68c01f00e175306a95eff7",
     "results/representative/states.csv": "fd5bc71880bbe2429929897883f57fd102b8b3319ef82ba0e46dd8ee2d3f8e56",
     "results/representative/store.csv": "d4daa10067d080b03ceb723c5757bf9757eea96f73c7fcf17e3f9251567bfd46",
-    "results/representative/tables.md": "aa9b15183fc45401987cd289bf037230ec4548ccfc3ee480e7a679c562e2879c",
-    "results/representative/timing.csv": "628aad9cf7356ef2a4b951b610fbe1959b6ba4552fe95ea5d5f3604e18b00f52"
+    "results/representative/tables.md": "81efb0371322a5dcd43a6c2a7dadb4d6ced60090a4c965d92f51170285f1050d",
+    "results/representative/timing.csv": "6ae448229cb688d455edc3cac5c0e24f03c54882885ddb5b61ff8f53d334b5d6"
   },
   "timing_scope": "Explorer only; excludes concrete/reference checks and metric summarization",
   "clock": "Sys.time CPU; Unix.gettimeofday wall; no warm-up; fresh process per trial"
