@@ -126,6 +126,7 @@ lookup where address reuse introduces two abstract successors. Run
 | Read | Purpose |
 | --- | --- |
 | [REPORT.md](REPORT.md) | Research question, implementation, evidence, results, and limitations |
+| [API.md](API.md) | Core module contracts, public state representations, and low-level preconditions |
 | [PAPER_NOTES.md](PAPER_NOTES.md) | Interpretation of the supplied paper and allocation choices |
 | [PAPER_TO_CODE.md](PAPER_TO_CODE.md) | Trace each construction to its implementation and checks |
 | [CORRECTNESS.md](CORRECTNESS.md) | Invariants and informal simulation/correctness proofs |
@@ -142,10 +143,10 @@ The source reference is the supplied [paper PDF](<Abstracting Abstract Machines.
 
 | Component | Entry point |
 | --- | --- |
-| Syntax, labels, free variables | [lib/syntax.ml](lib/syntax.ml) |
-| Pure concrete CEK | [lib/cek.ml](lib/cek.ml) |
+| Syntax, labels, free variables | [lib/syntax.mli](lib/syntax.mli), [lib/syntax.ml](lib/syntax.ml) |
+| Pure concrete CEK | [lib/cek.mli](lib/cek.mli), [lib/cek.ml](lib/cek.ml) |
 | Guided CEK/abstract branching example | [WALKTHROUGH.md](WALKTHROUGH.md), [bin/guided_example.ml](bin/guided_example.ml) |
-| Fresh/finite store machines, abstraction, GC, complete worklist | [lib/store_machine.ml](lib/store_machine.ml) |
+| Fresh/finite store machines, abstraction, GC, complete worklist | [lib/store_machine.mli](lib/store_machine.mli), [lib/store_machine.ml](lib/store_machine.ml) |
 | Independent pure reduction and closure reification | [lib/reference_semantics.ml](lib/reference_semantics.ml), [lib/closure_reification.ml](lib/closure_reification.ml) |
 | Bounded experiment search and corpus | [lib/experiment_analysis.ml](lib/experiment_analysis.ml), [lib/experiment_examples.ml](lib/experiment_examples.ml) |
 | Experiment executable and regeneration | [bin/experiments.ml](bin/experiments.ml), [scripts/run_experiments.py](scripts/run_experiments.py) |

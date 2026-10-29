@@ -52,6 +52,9 @@
 - An executable guided example with the full CEK trace, the first site-based
   abstract choice, and the GC precision gain, explained in `WALKTHROUGH.md` and
   checked against independent evaluation and actual closure alternatives.
+- Explicit `Syntax`, `Cek`, and `Store_machine` interfaces documenting public
+  entry points, supported-state preconditions, and inspection types; internal
+  transition helpers are hidden. `API.md` explains the representation tradeoff.
 
 Concrete execution reports fuel exhaustion separately from successful evaluation.
 Fuel exhaustion does not prove divergence. The library `Store_machine.analyze`

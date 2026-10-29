@@ -9,6 +9,11 @@ on Ubuntu 24.04 without an opam or Dune build cache, using that same package fil
 This workflow checks compilation and semantic validation; it does not regenerate
 the recorded performance experiments.
 
+`dune build @all` also checks the explicit `Syntax`, `Cek`, and `Store_machine`
+interfaces against their implementations and all executable/test callers.
+`API.md` explains why inspection types remain visible and documents the boundary
+between source entry points and low-level supported-state operations.
+
 Run `dune build`, `dune runtest`, and `dune exec bin/main.exe`. The last command
 prints CSV; redirect it to a file to repeat the checked-in comparison in
 `results/allocation-comparison.csv`. The current run's timestamp, toolchain,
