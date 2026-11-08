@@ -66,6 +66,31 @@ class ArtifactChecks(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "manifest differs"):
             artifact.verify(extracted)
 
+    def test_nested_documentation_is_packaged_without_changing_measurement_identity(self):
+        original_sources = artifact.measurement_sources(self.root)
+        details = self.root / "docs/details"
+        details.mkdir(parents=True)
+        guide = self.root / "docs/README.md"
+        guide.write_text("# Review guide\n", encoding="utf-8")
+        appendix = details / "SEMANTICS.md"
+        appendix.write_text("# Semantic details\n", encoding="utf-8")
+        paper = self.root / "docs/reference-paper.pdf"
+        # Binary bytes must not undergo the text line-ending normalization.
+        paper.write_bytes(b"%PDF-1.4\r\n")
+        self.assertEqual(original_sources, artifact.measurement_sources(self.root))
+        artifact.package(self.root)
+        archive = next((self.root / "artifacts").glob("*.zip"))
+        with zipfile.ZipFile(archive) as zipped:
+            self.assertEqual(zipped.read("docs/README.md"), b"# Review guide\n")
+            self.assertEqual(zipped.read("docs/details/SEMANTICS.md"), b"# Semantic details\n")
+            self.assertEqual(zipped.read("docs/reference-paper.pdf"), paper.read_bytes())
+            extracted = self.root / "extracted"
+            zipped.extractall(extracted)
+        artifact.verify(extracted)
+        (extracted / "docs/details/SEMANTICS.md").write_text("Changed\n")
+        with self.assertRaisesRegex(ValueError, "manifest differs"):
+            artifact.verify(extracted)
+
     def test_mixed_trials_do_not_count_as_complete_configuration(self):
         rows = [{"example": "example", "allocation": "pool4", "gc": "false", "status": status}
                 for status in ("complete", "state_limit", "cpu_limit")]

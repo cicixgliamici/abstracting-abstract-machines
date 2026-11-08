@@ -161,7 +161,7 @@ def regenerate_milestones(options, sources):
         paths.append(path)
         print(f"Regenerated {path.name}", flush=True)
     record = metadata(sources, paths, options)
-    record["protocol"] = "Separate complete milestone comparisons and deterministic guided trace; see VALIDATION.md"
+    record["protocol"] = "Separate complete milestone comparisons and deterministic guided trace; see docs/VALIDATION.md"
     write_json(ROOT / "results/milestone-metadata.json", record)
 
 

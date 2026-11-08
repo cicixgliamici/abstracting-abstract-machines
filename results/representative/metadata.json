@@ -1,5 +1,5 @@
 {
-  "utc": "2026-10-29T13:52:18.518843+00:00",
+  "utc": "2026-11-08T08:54:06.611200+00:00",
   "configuration": {
     "repetitions": 3,
     "max_states": 5000,
@@ -20,8 +20,8 @@
   "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
   "ocaml": "4.14.1",
   "dune": "3.23.1",
-  "git_revision": "781962c4484080de3a3289b72b62777937828687",
-  "git_status": "M IMPLEMENTATION_SCOPE.md\n M README.md\n M VALIDATION.md\n M results/representative/raw.csv\n M results/representative/tables.md\n M results/representative/timing.csv\n?? API.md\n?? lib/cek.mli\n?? lib/store_machine.mli\n?? lib/syntax.mli",
+  "git_revision": "6260030f5d4cd416a34930771599a168bf7c9342",
+  "git_status": "D API.md\n M ARTIFACT.json\n D ARTIFACT.md\n D \"Abstracting Abstract Machines.pdf\"\n D CORRECTNESS.md\n D EXPERIMENTS.md\n D GC_EXPERIMENT.md\n D IMPLEMENTATION_SCOPE.md\n D PAPER_NOTES.md\n D PAPER_TO_CODE.md\n M README.md\n D REFERENCE_SEMANTICS.md\n D REPORT.md\n D SECTION3_NOTES.md\n D VALIDATION.md\n D WALKTHROUGH.md\n D instructions.md\n M results/representative/raw.csv\n M results/representative/tables.md\n M results/representative/timing.csv\n M scripts/artifact.py\n M scripts/run_experiments.py\n M test/artifact_checks.py\n?? docs/",
   "source_sha256": {
     ".gitattributes": "beefa6c7d1d8f8efff75da70ff0412f894da1f19fe558e82487968eab2fe0c92",
     ".github/workflows/ci.yml": "20a15366630a90ca3819e323a748d685c976a41f1a7c57cfca2cde3b17dc53ca",
@@ -55,9 +55,9 @@
     "lib/store_machine.mli": "aaf2c1c51257333bdedceb434120f97ccacd74ec078e1f51118c6baecaf425d8",
     "lib/syntax.ml": "a92fff32bd39addd4c7192eb85c13520e486ffc8ffb1193d01aab39c27b17b4a",
     "lib/syntax.mli": "fbace3d9d94291be47371c7b0c1c3f3ea10e821cb629e69fcb8171e4ebb8dbba",
-    "scripts/artifact.py": "be9aa81ff30c54c304bd106f33144584e435e931cc1ad791914d62024ff004cb",
-    "scripts/run_experiments.py": "6394d0741e1240ee0869235b994d1b8dcfee2fc5d8dcb12403de1673c74a2f4d",
-    "test/artifact_checks.py": "7e185f1d25a14a6bbff86e64c3da6ac59dc576ddb2b7296c1d8ddce911293656",
+    "scripts/artifact.py": "496122e1c7907978242e84e08a4afa1ead98fff7e63559aa86cf5ec00f5fc043",
+    "scripts/run_experiments.py": "0fcfbc8611b60f6216fd13f9a9a2bbbe201262b3fbd69140f2a13dfd8ee17246",
+    "test/artifact_checks.py": "c1512261007632d8bae2984859ff573f8ec19d4f4485327b33ad35a550ba3478",
     "test/concrete_projection.ml": "2f742b9d01c2c1bfe74623ef9f9f79e8af13afe11e79468448cf670ed3d8ea0f",
     "test/dune": "32477737a7863f30bb3a184cb7847d078bd0b92a60b4be3e5bb72377ced5f554",
     "test/experiment_checks.ml": "781803b54d8dd95624d2d1ed2d7d4fd738ab881428c45e2a753d897261851afb",
@@ -70,16 +70,16 @@
     "test/reference_checks.ml": "83fe03931693401172c3f80bdec4d37444275add78cb3d8a8eecbeede894d7ee",
     "test/section3_checks.ml": "4d5d1bb78ab3a83371e5bacd9d1a3c710e930d4cf08026928b20b97eeee54f8f"
   },
-  "source_snapshot_sha256": "a3bccdec3ed75f4b4a6041b95182922ca25f580785d0236ba05c328e471b2d19",
+  "source_snapshot_sha256": "800dafd21de8db87257804eac1516fe80ea53948576ed3ce555a208f555a10ec",
   "result_sha256": {
     "results/representative/completion.csv": "41c1f4bcd5f5fc03663c9a68d39d49be3da83cdef247335f7d486425a43b8ce0",
     "results/representative/precision.csv": "7efc36451ef75a579144bb2624f13f7e7c28b2c71906378ffd677da5be808d5c",
     "results/representative/programs.csv": "827465840055ba12b263ed09303174edd5c03743ec6f1654da77590fc8d04919",
-    "results/representative/raw.csv": "11a869ae0c5571530266c356315063b0617d2a20fe68c01f00e175306a95eff7",
+    "results/representative/raw.csv": "50927d77802ca0e6b02491d6e0d5143d31d715020e8c35093f78743b7e33285e",
     "results/representative/states.csv": "fd5bc71880bbe2429929897883f57fd102b8b3319ef82ba0e46dd8ee2d3f8e56",
     "results/representative/store.csv": "d4daa10067d080b03ceb723c5757bf9757eea96f73c7fcf17e3f9251567bfd46",
-    "results/representative/tables.md": "81efb0371322a5dcd43a6c2a7dadb4d6ced60090a4c965d92f51170285f1050d",
-    "results/representative/timing.csv": "6ae448229cb688d455edc3cac5c0e24f03c54882885ddb5b61ff8f53d334b5d6"
+    "results/representative/tables.md": "660fde0066296997dba3653d9e027f49c18713c45847fe781a6bbd96dab6c183",
+    "results/representative/timing.csv": "116426cc0f43e3009334cdb53c07f9e298ee124888130347a3ddc5a8a8013047"
   },
   "timing_scope": "Explorer only; excludes concrete/reference checks and metric summarization",
   "clock": "Sys.time CPU; Unix.gettimeofday wall; no warm-up; fresh process per trial"

@@ -28,10 +28,10 @@ then bound addresses and allocation history.
 The source is David Van Horn and Matthew Might, *Abstracting Abstract Machines:
 A Systematic Approach to Higher-Order Program Analysis*, supplied
 arXiv:1105.1743v1, 9 May 2011, identifying ICFP 2010 as the original publication.
-Page references refer to the eight-page [supplied PDF](<Abstracting Abstract Machines.pdf>).
+Page references refer to the eight-page [supplied PDF](reference-paper.pdf).
 This study focuses on Sections 2-4 and Figures 1-7.
-[PAPER_NOTES.md](PAPER_NOTES.md) explains the interpretation;
-[PAPER_TO_CODE.md](PAPER_TO_CODE.md) maps constructions to executable rules.
+[PAPER_TO_CODE.md](PAPER_TO_CODE.md) maps constructions to executable rules and
+records the interpretation choices.
 
 The implementation question is narrower than full reproduction: can these
 constructions be made inspectable, checked against independent pure evaluation,
@@ -95,8 +95,8 @@ subsequent reads require only supported free-variable bindings.
 
 The deterministic schedule matters: arbitrary standalone GC steps would also
 retain uncollected paths. GC cannot remove an obsolete alternative from a
-still-live joined cell. [SECTION3_NOTES.md](SECTION3_NOTES.md) and
-[GC_EXPERIMENT.md](GC_EXPERIMENT.md) give targeted examples and rule details.
+still-live joined cell. The [state/control](details/STATE_AND_CONTROL.md) and
+[GC](details/GARBAGE_COLLECTION.md) appendices give targeted examples and rule details.
 
 ## 4. Correctness argument and validation
 
@@ -110,7 +110,7 @@ without depending on binder spelling.
 Tests check projected transitions as well as final values. Administrative steps
 preserve the reconstructed program; beta steps match reference reduction.
 Reification supports pure singleton acyclic stores, not joined abstract cells
-or cyclic extended values. [REFERENCE_SEMANTICS.md](REFERENCE_SEMANTICS.md)
+or cyclic extended values. [REFERENCE_SEMANTICS.md](details/REFERENCE_SEMANTICS.md)
 documents the independence boundary.
 
 | Layer | Executed coverage and purpose |
@@ -151,7 +151,7 @@ pools of 1, 4, 16, and 64 addresses, with GC off/on, in three fresh processes:
 120 configurations and 360 trials. The harness records exact printed sources,
 toolchain/platform metadata, settings, Git state, and source/result hashes.
 `ARTIFACT.json` identifies the complete review payload independently of Git;
-`ARTIFACT.md` documents verification and packaging.
+[REPRODUCIBILITY.md](REPRODUCIBILITY.md) documents verification and packaging.
 
 Defaults cap exploration at 5,000 states or two CPU seconds, with a 15-second
 process watchdog. Every search reports completion or its cutoff. Interrupted
@@ -198,7 +198,7 @@ pool-one baseline also illustrates allocation imprecision: lexical capture has
 11,891 states and four final lambda syntaxes, versus eight states and one syntax
 under sites. That separate protocol must not be merged with capped experiments
 as one dataset. [EXPERIMENTS.md](EXPERIMENTS.md), the
-[tables](results/representative/tables.md), and [raw trials](results/representative/raw.csv)
+[tables](../results/representative/tables.md), and [raw trials](../results/representative/raw.csv)
 provide the full method and observations.
 
 ## 6. Contributions, limitations, and conclusion
@@ -225,6 +225,6 @@ termination witnesses.
 The MVP provides a repository-based implementation report with traceable rules,
 evidence, and explicit limits. Further research extensions can be assessed
 separately. Reproduce it with `dune build`, `dune runtest`, and
-`python3 scripts/run_experiments.py`; the [README](README.md) gives the WSL command
-and reading route. A venue-specific submission still requires the requested
+`python3 scripts/run_experiments.py`; the [reproduction guide](REPRODUCIBILITY.md)
+gives setup and WSL commands. A venue-specific submission still requires the requested
 layout, bibliography style, and packaging; no submission format is assumed.

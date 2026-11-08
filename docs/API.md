@@ -6,9 +6,9 @@ requirements, result meanings, and the intended inspection surface.
 
 | Interface | Responsibility | Main entry points |
 | --- | --- | --- |
-| [syntax.mli](lib/syntax.mli) | Source AST, labels, free variables, runtime address vocabulary | Builders, `label`, `free_variables` |
-| [cek.mli](lib/cek.mli) | Concrete evaluation of the pure language | `initial`, `step`, `run` |
-| [store_machine.mli](lib/store_machine.mli) | Concrete/abstract store machines, collection, abstraction | `run`, `analyze`, `successors`, `collect`, `abstract_state` |
+| [syntax.mli](../lib/syntax.mli) | Source AST, labels, free variables, runtime address vocabulary | Builders, `label`, `free_variables` |
+| [cek.mli](../lib/cek.mli) | Concrete evaluation of the pure language | `initial`, `step`, `run` |
+| [store_machine.mli](../lib/store_machine.mli) | Concrete/abstract store machines, collection, abstraction | `run`, `analyze`, `successors`, `collect`, `abstract_state` |
 
 ## Source-level use
 
@@ -37,7 +37,7 @@ improving the study's semantic explanation.
 
 This choice means the compiler does not prevent malformed states. The interfaces
 distinguish checked source entry points from advanced operations on supported
-states. Low-level callers must preserve the invariants in `CORRECTNESS.md`:
+states. Low-level callers must preserve the invariants in [CORRECTNESS.md](CORRECTNESS.md):
 free-variable and continuation support, cell roles, fresh singleton cells, and
 the allocation phase appropriate to the policy. Collection permits unused
 environment entries to refer to removed addresses.

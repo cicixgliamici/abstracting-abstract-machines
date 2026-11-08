@@ -6,10 +6,11 @@ Run from the repository root on Linux/WSL with OCaml, Dune, and Python 3:
 opam exec -- python3 scripts/run_experiments.py --milestones
 ```
 
-On Windows with the existing Ubuntu toolchain:
+On Windows with the existing Ubuntu toolchain and a checkout in the Linux home
+directory (see [setup](REPRODUCIBILITY.md#first-time-setup)):
 
 ```powershell
-wsl -d Ubuntu -- bash -lc 'cd /mnt/c/Progetti/abstracting-abstract-machines && opam exec -- python3 scripts/run_experiments.py --milestones'
+wsl -d Ubuntu -- bash -lc 'cd ~/abstracting-abstract-machines && opam exec -- python3 scripts/run_experiments.py --milestones'
 ```
 
 The command builds the executable and regenerates `results/representative/`:
@@ -24,7 +25,7 @@ It retains their existing complete-analysis protocols, not the capped protocol.
 Source hashes identify dirty or untracked implementations as well as committed
 ones. Outputs are overwritten; save a separate copy to compare runs. Run
 `python3 scripts/run_experiments.py --verify` to check source/result provenance,
-then `python3 scripts/artifact.py` to package the review payload; see `ARTIFACT.md`.
+then `python3 scripts/artifact.py` to package the review payload; see [REPRODUCIBILITY.md](REPRODUCIBILITY.md).
 
 ## Corpus and configurations
 

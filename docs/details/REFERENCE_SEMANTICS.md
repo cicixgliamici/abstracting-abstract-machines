@@ -4,7 +4,7 @@ This milestone implements Section 2.1 of the supplied Van Horn/Might paper,
 and makes its relationship to the concrete machines executable. It also unfolds
 pure closure values, corresponding to the paper's `real` operation. It does not
 add a machine-checked proof of Lemma 1 or Lemma 3. The subsequent
-[CORRECTNESS.md](CORRECTNESS.md) supplies an informal argument including the
+[CORRECTNESS.md](../CORRECTNESS.md) supplies an informal argument including the
 required no-infinite-administrative-stuttering condition.
 
 ## Independence boundary
@@ -132,5 +132,5 @@ This oracle/reification covers the pure Section 2.1 language, not independent
 Section 3 semantics or unfolding cyclic mutable values into finite lambda terms.
 The earlier abstract-analysis CSVs still count printed syntax; their metrics are
 not silently redefined. Proof mechanization, refinement to bounded execution,
-broader workloads, and the final implementation paper remain open. The informal
-model-level simulation and evaluator arguments are in `CORRECTNESS.md`.
+and broader workloads remain open. The informal
+model-level simulation and evaluator arguments are in [CORRECTNESS.md](../CORRECTNESS.md).

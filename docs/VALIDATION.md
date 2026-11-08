@@ -3,7 +3,7 @@
 ## Scope and reproducibility
 
 The pinned review toolchain and fresh-checkout setup are documented in
-[README.md](README.md#build-verify-reproduce). The package file fixes OCaml
+[REPRODUCIBILITY.md](REPRODUCIBILITY.md#first-time-setup). The package file fixes OCaml
 4.14.1 and Dune 3.23.1. GitHub Actions runs a clean build and the full test suite
 on Ubuntu 24.04 without an opam or Dune build cache, using that same package file.
 This workflow checks compilation and semantic validation; it does not regenerate
@@ -11,7 +11,7 @@ the recorded performance experiments.
 
 `dune build @all` also checks the explicit `Syntax`, `Cek`, and `Store_machine`
 interfaces against their implementations and all executable/test callers.
-`API.md` explains why inspection types remain visible and documents the boundary
+[API.md](API.md) explains why inspection types remain visible and documents the boundary
 between source entry points and low-level supported-state operations.
 
 Run `dune build`, `dune runtest`, and `dune exec bin/main.exe`. The last command
@@ -103,7 +103,7 @@ simulation under enlarged stores, live CEK correspondence, fixed-point coverage,
 transitive roots, joined alternatives, cyclic graphs, idempotence, and reclaimed
 site reuse. The original checks still run with GC off.
 
-See [GC_EXPERIMENT.md](GC_EXPERIMENT.md) for the concrete GC comparison relation,
+See [GARBAGE_COLLECTION.md](details/GARBAGE_COLLECTION.md) for the concrete GC comparison relation,
 measurement method, results, and limitations. The GC experiment CSV is generated
 by `dune exec bin/gc_comparison.exe`; the earlier allocation CSV remains the
 comparison with collection disabled.
@@ -121,8 +121,8 @@ old-value returns, continuation reuse, and invalid applications reported as stuc
 The original CEK/GC suites retain their pure-language scope. Extended GC checks
 add runtime continuation roots and mutation targets; they do not claim CEK
 correspondence for a CEK language without mutable bindings. See
-[SECTION3_NOTES.md](SECTION3_NOTES.md) for rule choices and proof limits, and
-[results/section3-comparison.csv](results/section3-comparison.csv) for paired results
+[STATE_AND_CONTROL.md](details/STATE_AND_CONTROL.md) for rule choices and proof limits, and
+[results/section3-comparison.csv](../results/section3-comparison.csv) for paired results
 from `dune exec bin/section3_comparison.exe`.
 
 ## Independent pure reference validation
@@ -141,8 +141,8 @@ capture hazards, shadowing, evaluation order, weak values, and reification limit
 Reference fuel counts reductions; machine fuel counts transitions. The named
 CSV marks incomplete execution without a value-agreement claim.
 
-See [REFERENCE_SEMANTICS.md](REFERENCE_SEMANTICS.md) and
-[results/reference-comparison.csv](results/reference-comparison.csv). This
+See [REFERENCE_SEMANTICS.md](details/REFERENCE_SEMANTICS.md) and
+[results/reference-comparison.csv](../results/reference-comparison.csv). This
 supports the pure evaluator correspondence but remains bounded experimental
 validation; it is not an independent Section 3 semantics or general proof.
 

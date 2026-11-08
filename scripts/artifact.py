@@ -14,6 +14,10 @@ def source_paths(root=ROOT):
     paths = list(root.glob("*.md")) + list(root.glob("*.opam"))
     paths += [root / name for name in ("dune-project", ".gitignore", ".gitattributes", "VERSION")]
     paths += list(root.glob("*.pdf"))
+    # Review documents and the reference paper must survive archive extraction.
+    # Keep documentation discovery separate from executable measurement sources.
+    paths += list((root / "docs").rglob("*.md"))
+    paths += list((root / "docs").rglob("*.pdf"))
     for directory in SOURCE_DIRECTORIES:
         paths += [path for path in (root / directory).rglob("*")
                   if path.is_file() and "__pycache__" not in path.parts]

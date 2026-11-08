@@ -7,7 +7,7 @@ opam exec -- dune exec bin/guided_example.exe
 ```
 
 The executable prints Markdown computed from the real machine transitions.
-The checked-in [generated trace](results/guided-example.md) contains every CEK
+The checked-in [generated trace](../results/guided-example.md) contains every CEK
 state, the abstract prefix up to its first choice, both successor states, and
 the effect of garbage collection. Regenerate it together with its provenance
 using `opam exec -- python3 scripts/run_experiments.py --milestones`.

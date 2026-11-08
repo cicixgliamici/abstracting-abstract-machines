@@ -173,9 +173,9 @@ The implementation now covers the principal Section 3 constructions as well as
 the core derivation and deterministic GC. Proof mechanization, compiled-code
 resource/representation refinement, an independent extended-language semantics,
 cyclic/extended value representations, and larger application benchmarks remain
-separate work. [REPORT.md](REPORT.md) consolidates the implementation study;
-[EXPERIMENTS.md](EXPERIMENTS.md) includes representative control/mutation workloads.
-The pure reduction evaluator and pure closure reification are implemented in
-the later milestone documented in `REFERENCE_SEMANTICS.md`.
-`CORRECTNESS.md` now supplies an informal per-rule simulation argument for the
+separate work. [REPORT.md](../REPORT.md) consolidates the implementation study;
+[EXPERIMENTS.md](../EXPERIMENTS.md) includes representative control/mutation workloads.
+The pure reduction evaluator and pure closure reification are documented in
+[REFERENCE_SEMANTICS.md](REFERENCE_SEMANTICS.md).
+[CORRECTNESS.md](../CORRECTNESS.md) supplies an informal per-rule simulation argument for the
 Section 3 model, including both call/cc receiver cases, weak mutation, and GC.

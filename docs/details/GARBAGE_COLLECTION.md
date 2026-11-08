@@ -128,7 +128,7 @@ visited-state memory, and OCaml overhead. Final-term counts omit labels and
 captured environments; they are not full closure-denotation counts. The exact
 result assertion and simulation checks complement this limited precision metric.
 
-[REPORT.md](REPORT.md) discusses allocation precision, reclaimable site reuse,
-and GC overhead. [EXPERIMENTS.md](EXPERIMENTS.md) adds longer higher-order terms
+[REPORT.md](../REPORT.md) discusses allocation precision, reclaimable site reuse,
+and GC overhead. [EXPERIMENTS.md](../EXPERIMENTS.md) adds longer higher-order terms
 and mutation/control workloads with explicit search limits. Larger application
 workloads would still be needed before broader claims.
