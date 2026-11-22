@@ -7,9 +7,17 @@ execution, store-allocated bindings and continuations, finite-address analysis,
 mutation, first-class control, and deterministic garbage collection.
 
 The analysis construction comes from the paper. This repository adds an
-inspectable implementation, an independent pure substitution evaluator, generated
+inspectable implementation, independent pure and extended evaluators, generated
 semantic checks, an informal correctness argument, and reproducible experiments.
 Programs are OCaml ASTs; there is no source parser or file-input CLI.
+
+The reproduction covers the central constructions of Sections 2-4 of the
+supplied eight-page paper, with specialized allocation policies and deterministic
+GC. The [scope assessment](docs/PAPER_TO_CODE.md#reproduction-scope) distinguishes
+implemented constructions, specializations, and excluded variants.
+An [extended reference](docs/details/EXTENDED_REFERENCE.md) checks mutation and
+control independently; [allocation callbacks](docs/details/ALLOCATORS.md) prepare
+experiments with alternative time and address policies.
 
 **Start with the [documentation guide](docs/README.md).** It provides a short
 reading route and separates the report from technical appendices.

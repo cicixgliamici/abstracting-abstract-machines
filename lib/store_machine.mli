@@ -54,7 +54,8 @@ type state = {
   allocations : int;
 }
 (** [allocations] is a fresh serial count, a capped pooled phase, or zero for
-    sites. Collection preserves it; it is not the store's cardinality. *)
+    built-in sites. Custom allocators use it as a nonnegative integer time.
+    Collection preserves it; it is not the store's cardinality. *)
 
 module States : Set.S with type elt = state
 
@@ -91,6 +92,41 @@ val run : ?fuel:int -> ?gc:bool -> Syntax.expression -> execution
     a source rejected by [initial]. *)
 val analyze :
   ?addresses:int -> ?policy:allocation -> ?gc:bool -> Syntax.expression -> States.t
+
+(** {1 Parameterized abstract allocation} *)
+
+type allocator
+
+(** Construct an experimental abstract allocator. [alloc state frame location]
+    selects an address once for each allocation event. [tick state frame event]
+    runs once per ordinary successor, including nonallocating transitions;
+    [event] is [Some location] exactly when that transition allocates.
+    [frame] is the selected continuation alternative for value transitions,
+    otherwise [None]. Both callbacks see the state BEFORE the transition.
+    GC never calls either callback. Final/stuck states do not tick.
+
+    Callbacks must be deterministic and pure, preserve supported-state roles,
+    and return nonnegative times. Allocation must not return [Halt]. Custom
+    mutation always joins; strong updates remain exclusive to fresh execution.
+    The initial time is zero and the address vocabulary is still [address].
+
+    Finiteness requires finite address/time ranges for each fixed program.
+    Soundness additionally requires an abstraction and allocation/tick simulation
+    argument; construction alone does not certify these obligations. The built-in
+    correctness chapter does not automatically apply to custom callbacks. *)
+val make_allocator :
+  alloc:(state -> storable option -> location -> address) ->
+  tick:(state -> storable option -> location option -> int) -> allocator
+
+(** Ordinary abstract successors, optionally collected, using custom parameters.
+    @raise Invalid_argument if allocation returns halt or tick returns a negative time. *)
+val successors_with : ?gc:bool -> allocator -> state -> state list
+
+(** Complete worklist for custom abstract parameters. There is no cutoff or
+    automatic finite-domain check: termination requires the obligations above,
+    as well as sufficient resources. [abstract_state] remains built-in-policy
+    specific; custom policies need their own abstraction. *)
+val analyze_with : ?gc:bool -> allocator -> Syntax.expression -> States.t
 
 (** {1 Supported-state transitions and inspection} *)
 
@@ -143,7 +179,7 @@ val allocate : allocation -> state -> location -> address
 (** Project halt or a fresh concrete address into a finite policy's domain.
     Requires a finite policy and a positive, provenance-bearing concrete serial.
     @raise Invalid_argument for invalid pools, nonconcrete/nonhalt input, or
-    a fresh-address projection requested with [Fresh]. *)
+    [Fresh], including when the address is [Halt]. *)
 val abstract_address : allocation -> address -> address
 
 (** Project a supported fresh state, including runtime addresses and phase,

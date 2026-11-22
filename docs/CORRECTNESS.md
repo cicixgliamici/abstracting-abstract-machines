@@ -37,12 +37,22 @@ the theorems. Abstract premises require the supported-state conditions in Sectio
 including well-formed extra alternatives; a store with arbitrary malformed values
 can cause `Names.find` to fail during collection.
 
-No independent reference semantics for Section 3 is claimed. Its concrete rules
-are defined by the extended store machine and matched to Figure 6; the abstract
-simulation theorem is relative to those concrete rules. No optimal precision,
+The Section 3 simulation theorem is relative to the concrete rules matched to
+Figure 6. `Extended_reference` independently evaluates the extended language
+using functional continuations and a separate binding heap. Its bounded
+observations corroborate those rules, but this chapter does not prove a general
+correspondence theorem with that evaluator. No optimal precision,
 universal speedup, complete error detection, or termination from abstract final-state
 existence is claimed. Tests corroborate model/code correspondence; they do not
 replace any of the quantified arguments below.
+
+The policy-specific proofs below concern `Fresh`, `Bounded`, and `Site_based`.
+`make_allocator` also permits custom `alloc`/`tick` callbacks, whose finiteness
+and simulation obligations are separate. Weak updates alone do not establish
+soundness of a custom allocator. The generic worklist reasoning applies when
+callbacks define a deterministic, finite-domain transition relation and preserve
+supported states; the API does not prove these premises. See
+[ALLOCATORS.md](details/ALLOCATORS.md).
 
 ## 2. Notation and implementation dictionary
 
@@ -665,10 +675,11 @@ an individual alternative from a live cell.
 | Closure denotation / projection | `closure_reification.ml` | Reified final values and administrative/beta replay for 4034 generated terms |
 | No infinite administrative stuttering | `weak_size`, `pending_work` in the audit | Natural measure decreases on checked pure transitions |
 | I1-I5 and determinism | `store_machine.ml` rule cases | `invariant_checks.ml`: support, roles, singleton concrete cells, phases |
-| Allocation / join / lookup | `allocate`, `next_phase`, `insert`, `lookup` | Exact/enlarged-store step simulation for pools 1/2 and sites |
+| Allocation / join / lookup | `allocate`, `builtin_allocator`, `advance`, `insert`, `lookup` | Exact/enlarged-store step simulation for pools 1/2 and sites; callback graph compatibility |
 | Section 3 cases | `raw_successors`, `continue`, `mutate`, `apply_callcc`, `apply_function` | 872 small extended terms, 22 named examples, GC off/on |
 | Marking and concrete GC commutation | `live_addresses`, `collect` | Cyclic root graphs plus ordinary/collected concrete successors |
 | Collected simulation / reachability | `successors ~gc:true`, `analyze` | GC coverage and fixed-point closure checks |
+| Independent extended observations | `extended_reference.ml` | Six source contexts over 872 generated terms and 34 named/corpus entries, GC off/on; bounded evidence, not a general correspondence proof |
 
 The invariant audit exercises 34 named input entries and 154 extended source
 terms of 1-4 nodes. It checks supporting value/frame edges, role separation,
@@ -680,7 +691,7 @@ quantifiers or make this an automatically checked proof.
 
 Remaining proof work is mechanization and refinement to bounded OCaml execution
 (including arithmetic/resource assumptions), not replacing the case analysis
-with more examples. An independent extended-language oracle, graph-aware value
-representations, broader benchmarks, and the final implementation paper are
-separate project milestones. The concrete Section 3 semantics is still taken
-from the implemented/modelled rules rather than independently derived here.
+with more examples. General correspondence with the extended CPS evaluator,
+graph-aware value representations, broader benchmarks, and proofs for future
+context-sensitive policies remain separate milestones. The concrete Section 3
+simulation theorem is still relative to the implemented/modelled rules.

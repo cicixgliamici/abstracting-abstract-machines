@@ -125,9 +125,10 @@ and GC suites still run unchanged in scope.
   targets and source continuation literals, identify the CEK boundary, and verify
   that the sequencing helper avoids capturing an outer variable.
 
-Generated terms are small and the named expected results are manually specified;
-these are experimental checks, not an independent extended-language evaluator
-or a general proof of soundness. Full extended fixed points are tested under
+Generated terms are small and the named expected results are manually specified.
+A separate [extended reference](EXTENDED_REFERENCE.md) now checks concrete
+outcomes through functional continuations and finite source observations.
+Neither suite is a general proof of soundness. Full extended fixed points are tested under
 sites; pools are checked by local simulation rather than expensive named analyses.
 
 ## Reproduce and inspect results
@@ -171,7 +172,7 @@ denotation counts. The whole-state simulation tests provide separate evidence.
 
 The implementation now covers the principal Section 3 constructions as well as
 the core derivation and deterministic GC. Proof mechanization, compiled-code
-resource/representation refinement, an independent extended-language semantics,
+resource/representation refinement, a general extended-reference correspondence,
 cyclic/extended value representations, and larger application benchmarks remain
 separate work. [REPORT.md](../REPORT.md) consolidates the implementation study;
 [EXPERIMENTS.md](../EXPERIMENTS.md) includes representative control/mutation workloads.

@@ -5,6 +5,28 @@ A Systematic Approach to Higher-Order Program Analysis*, arXiv:1105.1743v1,
 9 May 2011. The supplied [eight-page PDF](reference-paper.pdf) identifies ICFP
 2010 as the original publication. Page references below use that PDF.
 
+## Reproduction scope
+
+This repository implements the central constructions of Sections 2-4 of the
+supplied arXiv:1105.1743v1 paper, with specialized allocation policies and
+deterministic GC. It is an implementation study of that construction, rather
+than an implementation of every possible instance of the paper's framework.
+
+| Scope | Assessment |
+| --- | --- |
+| Implemented | Pure reduction, CEK, store-allocated CESK*, finite joined stores, reachable-state exploration, executable abstraction, conditionals, mutation, first-class continuations, and deterministic abstract GC |
+| Specialized | Sections 2.4-2.5 parameterize time and allocation through `tick` and `alloc`. Built-in policies retain their allocation-event phases; `make_allocator` additionally exposes per-transition `tick` and event-specific `alloc`. Time is an integer and the address vocabulary is fixed; call-history policies and arbitrary time types remain outside scope. Non-value rules do not select a continuation alternative. |
+| Excluded paper variant | Section 4 first permits standalone GC at arbitrary states, then describes deterministic ordinary-step-plus-GC scheduling. Only the latter schedule is exposed here; GC off means ordinary transitions alone, not exploration of all collection schedules. |
+| Validation boundary | The mathematical argument is informal and executable checks are bounded. Independent substitution/reification covers the pure language; an independent functional-continuation evaluator checks extended observations. General extended equivalence and arbitrary-callback soundness are not proved. Proof mechanization is additional validation work, not a missing executable rule required by the paper. |
+| Further directions | Laziness, exceptions, objects, modular analysis, and pushdown analysis are discussed as applications or perspectives, not all developed as transition systems in this eight-page paper. They are outside this reproduction. |
+
+The reproduced evaluator-to-analysis construction is complete within this stated
+scope. The [allocator contract](details/ALLOCATORS.md) specifies the supported
+parameterization and proof obligations; alternative GC schedules remain separate
+extensions. Parser support, arithmetic, compiler integration,
+and global store widening are also outside scope; their absence does not imply
+that one of the central displayed constructions is missing.
+
 ## Implemented constructions
 
 | Paper location | Construction | Implementation | Evidence / boundary |
@@ -14,7 +36,7 @@ A Systematic Approach to Higher-Order Program Analysis*, arXiv:1105.1743v1,
 | Sections 2.2-2.3, pp. 3-4 | Closure denotation (`real`) and evaluator correctness | `Closure_reification`, `test/reference_checks.ml` | 4034 closed terms; program projection and reified results, GC off/on; experimental evidence for Lemmas 1/3 |
 | Figure 1, p. 3 | CEK state and four transitions | `lib/cek.ml`, `initial`, `step`, `run` | Complete state projection in `test/concrete_projection.ml` |
 | Figure 2, p. 4 | Store-allocated bindings and frames | `lib/store_machine.ml`, `Fresh`, `successors` | Fresh singleton cells and deterministic traces |
-| Figure 3, p. 4 | Allocation and timestamps | `allocate`, `next_phase` | Explicit concrete counter, capped pooled phase, singleton site phase |
+| Figure 3, p. 4 | Allocation and timestamps | `allocate`, `builtin_allocator`, `advance`, `make_allocator` | Original phases preserved; custom per-transition integer time and address selection, with explicit finiteness/simulation obligations |
 | Figure 4, p. 5 | Joined store; nondeterministic lookup | `insert`, `lookup`, `continue`, `successors`, `Bounded`, `Site_based` | Pool and role-separated site policies compared in CSV |
 | Reachable-state semantics, Section 2.5 | Reflexive transitive closure | `analyze`, `States` | Initial state included; successor closure checked |
 | Figure 5, p. 5 | Structural abstraction | `abstract_state`, `abstract_value`, `approximates` | Local simulation for pools 1/2 and sites, including enlarged stores |
@@ -30,6 +52,8 @@ A Systematic Approach to Higher-Order Program Analysis*, arXiv:1105.1743v1,
 | Implementation-study addition | Representative experiments and explicit cutoffs | `lib/experiment_examples.ml`, `lib/experiment_analysis.ml`, `bin/experiments.ml`, `scripts/run_experiments.py` | Twelve programs, five policies, 360 trials, completion rates, source/result metadata; partial searches are not complete reachability |
 | Implementation-study addition | Identifiable review payload | `scripts/artifact.py`, `ARTIFACT.json`, [REPRODUCIBILITY.md](REPRODUCIBILITY.md) | Source/result checksum verification and self-contained ZIP, independent of Git history |
 | Implementation-study addition | Consolidated interpretation and results | [REPORT.md](REPORT.md), [EXPERIMENTS.md](EXPERIMENTS.md) | Distinguishes reproduced algorithms, verification additions, metric limits, and open work |
+| Implementation-study addition | Independent state/control evaluator | `extended_reference.ml`, `test/extended_reference_checks.ml` | Own AST, binding heap, functional continuations; six contexts over 872 generated terms and 34 named/corpus entries, GC off/on; bounded observational evidence |
+| Implementation-study addition | Experimental allocation surface | `make_allocator`, `successors_with`, `analyze_with`, `test/allocator_checks.ml` | Complete graph compatibility, selected frames, callback timing, and a finite per-transition clock; custom policies require separate soundness arguments |
 
 ## Interpretation choices
 

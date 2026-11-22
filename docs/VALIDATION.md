@@ -14,6 +14,10 @@ interfaces against their implementations and all executable/test callers.
 [API.md](API.md) explains why inspection types remain visible and documents the boundary
 between source entry points and low-level supported-state operations.
 
+Direct address-projection regression checks reject nonpositive pools and `Fresh`
+for both halt and concrete addresses, reject already abstract input, and preserve
+valid halt, pool-boundary, and site projections.
+
 Run `dune build`, `dune runtest`, and `dune exec bin/main.exe`. The last command
 prints CSV; redirect it to a file to repeat the checked-in comparison in
 `results/allocation-comparison.csv`. The current run's timestamp, toolchain,
@@ -146,6 +150,27 @@ See [REFERENCE_SEMANTICS.md](details/REFERENCE_SEMANTICS.md) and
 supports the pure evaluator correspondence but remains bounded experimental
 validation; it is not an independent Section 3 semantics or general proof.
 
+## Independent extended reference and allocator parameters
+
+`test/extended_reference_checks.ml` compares a separate CPS evaluator with fresh
+execution, GC off/on. It uses 872 generated terms of 1-5 nodes, 22 named examples,
+and twelve experiment entries, each in six source contexts. The 5,430 terminal
+observations agree; six jointly exhausted observations are unassessed. Each
+evaluation has fuel 4,000, but the two evaluators count different operations.
+A terminal/exhausted mismatch fails with a budget/disagreement diagnostic.
+Contexts apply returned closures/continuations and test truthiness, so matching
+printed code is supplemented with finite behavioral checks, including cycles.
+These observations overlap and do not establish contextual equivalence.
+See [EXTENDED_REFERENCE.md](details/EXTENDED_REFERENCE.md).
+
+`test/allocator_checks.ml` reconstructs the original site and pool policies with
+custom `alloc`/`tick` callbacks and compares full reached graphs. A finite
+alternating clock advances every ordinary step; erasing its time reproduces
+the site graph for 34 named/corpus entries, GC off/on. Additional checks cover
+selected continuation alternatives, callback scheduling, reserved halt, and
+negative time. Custom policies still require independent finiteness and
+simulation arguments; see [ALLOCATORS.md](details/ALLOCATORS.md).
+
 ## Mathematical argument and invariant audit
 
 [CORRECTNESS.md](CORRECTNESS.md) contains the informal mathematical argument
@@ -164,8 +189,9 @@ the clauses used in the proofs; it does not establish universal quantifiers.
 `test/experiment_checks.ml` compares all twelve representative programs under site
 allocation, with GC off/on, against the original complete analyzer. It checks
 explicit state/CPU cutoff statuses and completion of a graph exactly at its cap.
-The runner checks full pure concrete values against the independent reference
-and concrete final syntax inclusion in complete terminating analyses.
+The runner checks full pure concrete values against the substitution reference,
+all concrete outcome/value syntaxes against the extended reference, and concrete
+final syntax inclusion in complete terminating analyses.
 [EXPERIMENTS.md](EXPERIMENTS.md) documents the 360 raw trials and separately
 reported precision, graph size, store peaks, and times. Interrupted searches
 are measured prefixes and do not inherit complete fixed-point guarantees.

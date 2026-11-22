@@ -77,8 +77,10 @@ under a shared budget from metrics available only for complete fixed points.
   Syntax omits labels, closure environments, and continuation identities; zero
   extra syntax does **not** establish exact value or behavioral precision.
   Pure terminating results are additionally checked against capture-avoiding
-  substitution using reified full concrete values. Extended results use the
-  concrete store machine, not an independent extended-language oracle.
+  substitution using reified full concrete values. All concrete outcome/value
+  syntaxes are also checked by the independent extended evaluator before timing.
+  Its jointly exhausted cases remain inconclusive. Separate six-context tests
+  exercise returned extended values; no general extended equivalence is claimed.
 * **States:** reached-state and final-state cardinalities. They measure graph
   size, not precision or execution time. Each state contains its own store;
   there is no global store widening.

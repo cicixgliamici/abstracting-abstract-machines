@@ -130,6 +130,9 @@ two exhaust their budgets. Matching exhausted runs is not a divergence proof.
 
 This oracle/reification covers the pure Section 2.1 language, not independent
 Section 3 semantics or unfolding cyclic mutable values into finite lambda terms.
+The separate [extended reference](EXTENDED_REFERENCE.md) supplies independent
+Section 3 evaluation using functional continuations and finite source-context
+observations; it does not extend pure reification to cyclic values.
 The earlier abstract-analysis CSVs still count printed syntax; their metrics are
 not silently redefined. Proof mechanization, refinement to bounded execution,
 and broader workloads remain open. The informal

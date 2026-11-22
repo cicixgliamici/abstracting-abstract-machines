@@ -25,6 +25,8 @@ All shell commands in these documents run from the repository root.
 | How do mutation and first-class continuations work? | [State and control](details/STATE_AND_CONTROL.md) |
 | How are roots, collection, and the separate GC comparison defined? | [Garbage collection](details/GARBAGE_COLLECTION.md) |
 | How independent is the pure validation oracle? | [Reference semantics](details/REFERENCE_SEMANTICS.md) |
+| How are mutation and continuations checked independently? | [Extended reference](details/EXTENDED_REFERENCE.md) |
+| How can time and allocation be varied safely? | [Allocation parameters](details/ALLOCATORS.md) |
 
 The [reference paper](reference-paper.pdf) is the supplied eight-page version;
 paper page and figure references throughout the documentation refer to it.

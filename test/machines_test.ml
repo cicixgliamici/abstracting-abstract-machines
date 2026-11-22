@@ -97,6 +97,30 @@ let check_errors () =
   check "Infinite allocator rejected for analysis" (rejected (fun () ->
     ignore (Machine.analyze ~policy:Machine.Fresh Examples.identity)))
 
+let check_address_projection () =
+  let rejected policy address =
+    try ignore (Machine.abstract_address policy address); false
+    with Invalid_argument _ -> true in
+  let location = Machine.Binding_site 7 in
+  let concrete serial = Machine.Concrete (serial, location) in
+  (* Halt must not bypass policy validation; direct helper calls have the same
+     finite-policy contract as whole-state abstraction. *)
+  List.iter (fun policy -> List.iter (fun address ->
+    check "Address projection must reject invalid or infinite policies"
+      (rejected policy address)) [Machine.Halt; concrete 1])
+    [Machine.Bounded 0; Machine.Bounded (-1); Machine.Fresh];
+  List.iter (fun policy ->
+    check "Valid projection preserves halt"
+      (Machine.abstract_address policy Machine.Halt = Machine.Halt);
+    check "Already abstract addresses must be rejected"
+      (rejected policy (Machine.Pool 1))) [Machine.Bounded 2; Machine.Site_based];
+  List.iter (fun (serial, expected) ->
+    check "Pool projection preserves slots through the boundary, then reuses one"
+      (Machine.abstract_address (Machine.Bounded 2) (concrete serial) = Machine.Pool expected))
+    [1, 1; 2, 2; 3, 1];
+  check "Site projection preserves allocation provenance"
+    (Machine.abstract_address Machine.Site_based (concrete 3) = Machine.Site location)
+
 let check_map_equality () =
   let bindings names = List.fold_left (fun result name ->
     Machine.Names.add name (Machine.Pool 1) result) Machine.Names.empty names in
@@ -143,6 +167,7 @@ let () =
   check_returned_closure ();
   check_labels ();
   check_errors ();
+  check_address_projection ();
   check_map_equality ();
   check_evaluation_strategy ();
   (match Cek.run ~fuel:40 Examples.omega with
@@ -152,6 +177,8 @@ let () =
   print_endline "Whole-state lockstep, local simulation with enlarged stores, reachability closure, lexical results, and allocation invariants passed.";
   Gc_checks.run generated;
   Section3_checks.run ();
+  Extended_reference_checks.run ();
+  Allocator_checks.run ();
   Reference_checks.run ();
   Invariant_checks.run ();
   Experiment_checks.run ();

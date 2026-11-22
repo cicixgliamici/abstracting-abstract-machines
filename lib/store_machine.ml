@@ -125,100 +125,131 @@ let allocate policy state location =
          Its capped phase is part of the state and is preserved by collection. *)
       Pool (if used < size then used + 1 else 1)
 
-let next_phase policy state = match policy with
-  | Fresh -> state.allocations + 1
-  | Bounded size -> min size (state.allocations + 1)
-  | Site_based -> 0
+type allocator = {
+  alloc : state -> storable option -> location -> address;
+  tick : state -> storable option -> location option -> int;
+  strong_updates : bool;
+}
 
-let push policy state location control environment continuation value =
-  let address = allocate policy state location in
-  { control; environment;
-    allocations = next_phase policy state;
-    continuation = (match continuation with Some rest -> rest | None -> address);
-    store = insert address value state.store }
+(* Custom analyses always join writes. Strong mutation belongs exclusively to
+   the built-in fresh machine, whose singleton invariant is established here. *)
+let make_allocator ~alloc ~tick = { alloc; tick; strong_updates = false }
 
-let bind_value policy state function_value environment rest value captured =
+let builtin_allocator policy =
+  validate_policy policy;
+  let tick state _ event = match policy with
+    | Site_based -> 0
+    | Fresh -> state.allocations + (if event = None then 0 else 1)
+    | Bounded size -> min size (state.allocations + (if event = None then 0 else 1)) in
+  { alloc = (fun state _ location -> allocate policy state location);
+    tick; strong_updates = policy = Fresh }
+
+let advance allocator state frame event next =
+  let time = allocator.tick state frame event in
+  if time < 0 then invalid_arg "Allocation time must be nonnegative";
+  { next with allocations = time }
+
+let allocated_state allocator state frame location build =
+  let address = allocator.alloc state frame location in
+  if address = Halt then invalid_arg "Allocation must preserve reserved halt";
+  advance allocator state frame (Some location) (build address)
+
+let push allocator state frame location control environment continuation value =
+  allocated_state allocator state frame location (fun address ->
+    { control; environment; allocations = state.allocations;
+      continuation = (match continuation with Some rest -> rest | None -> address);
+      store = insert address value state.store })
+
+let bind_value allocator state frame function_value environment rest value captured =
   match function_value.term with
   | Lambda (name, body) ->
       let location = Binding_site function_value.label in
-      let address = allocate policy state location in
-      [push policy state location body (Names.add name address environment)
-         (Some rest) (Closure (value, captured))]
+      [allocated_state allocator state frame location (fun address ->
+        { control = body; environment = Names.add name address environment;
+          allocations = state.allocations; continuation = rest;
+          store = insert address (Closure (value, captured)) state.store })]
   | _ -> []
 
 let capture state rest = { label = state.control.label; term = Captured_continuation rest }
 
 (* call/cc receives either a lambda or an already captured continuation. Capture
    the caller's remaining continuation, excluding the primitive's call frame. *)
-let apply_callcc policy state rest = match state.control.term with
-  | Lambda _ -> bind_value policy state state.control state.environment rest
+let apply_callcc allocator state frame rest = match state.control.term with
+  | Lambda _ -> bind_value allocator state frame state.control state.environment rest
       (capture state rest) Names.empty
   | Captured_continuation target ->
-      [{ state with control = capture state rest; environment = Names.empty; continuation = target }]
+      [advance allocator state frame None
+        { state with control = capture state rest; environment = Names.empty; continuation = target }]
   | _ -> []
 
-let apply_function policy state value environment rest = match value.term with
-  | Lambda _ -> bind_value policy state value environment rest state.control state.environment
-  | Callcc -> apply_callcc policy state rest
+let apply_function allocator state frame value environment rest = match value.term with
+  | Lambda _ -> bind_value allocator state frame value environment rest state.control state.environment
+  | Callcc -> apply_callcc allocator state frame rest
   | Captured_continuation target ->
       (* The current control is the evaluated argument. A jump retains that
          value and the current store, so earlier mutations survive reentry. *)
-      [{ state with continuation = target }]
+      [advance allocator state frame None { state with continuation = target }]
   | _ -> [] (* Applying false, or call/cc to false, is a stuck computation. *)
 
 (* Figure 6 returns the OLD value of the binding. Concrete mutation overwrites
    its unique cell; abstract mutation joins, since aliases may share an address.
    Preserve the old value's lexical environment when returning a closure. *)
-let mutate policy state target rest =
+let mutate allocator state frame target rest =
   let value = Closure (state.control, state.environment) in
-  let store = match policy with
-    | Fresh -> Addresses.add target (Values.singleton value) state.store
-    | Bounded _ | Site_based -> insert target value state.store in
+  let store = if allocator.strong_updates then
+      Addresses.add target (Values.singleton value) state.store
+    else insert target value state.store in
   lookup target state.store |> Values.elements |> List.filter_map (function
-    | Closure (control, environment) -> Some { state with control; environment; store; continuation = rest }
+    | Closure (control, environment) -> Some (advance allocator state frame None
+        { state with control; environment; store; continuation = rest })
     | _ -> None)
 
-let continue policy state = function
+let continue allocator state selected =
+  let frame = Some selected in
+  match selected with
   | Argument (site, operand, environment, rest) ->
-      [push policy state (Function_site site) operand environment None
+      [push allocator state frame (Function_site site) operand environment None
          (Function (state.control, state.environment, rest))]
-  | Function (value, environment, rest) -> apply_function policy state value environment rest
+  | Function (value, environment, rest) -> apply_function allocator state frame value environment rest
   | Conditional_frame (yes, no, environment, rest) ->
       let control = if state.control.term = False then no else yes in
-      [{ state with control; environment; continuation = rest }]
-  | Assignment_frame (target, rest) -> mutate policy state target rest
+      [advance allocator state frame None { state with control; environment; continuation = rest }]
+  | Assignment_frame (target, rest) -> mutate allocator state frame target rest
   | Empty | Closure _ -> []
 
 (* Figures 2, 4, and 6 share their control rules. Frame allocation uses the
    application site; binding allocation uses the applied lambda's binder site. *)
-let raw_successors policy state =
-  validate_policy policy;
+let raw_successors allocator state =
   match state.control.term with
   | Variable name ->
       lookup (Names.find name state.environment) state.store
       |> Values.elements |> List.filter_map (function
-          | Closure (control, environment) -> Some { state with control; environment }
+          | Closure (control, environment) -> Some (advance allocator state None None
+              { state with control; environment })
           | _ -> None)
   | Apply (operator, operand) ->
-      [push policy state (Argument_site state.control.label) operator
+      [push allocator state None (Argument_site state.control.label) operator
          state.environment None
          (Argument (state.control.label, operand, state.environment, state.continuation))]
   | Conditional (condition, yes, no) ->
-      [push policy state (Conditional_site state.control.label) condition state.environment None
+      [push allocator state None (Conditional_site state.control.label) condition state.environment None
          (Conditional_frame (yes, no, state.environment, state.continuation))]
   | Assign (name, value) ->
-      [push policy state (Assignment_site state.control.label) value state.environment None
+      [push allocator state None (Assignment_site state.control.label) value state.environment None
          (Assignment_frame (Names.find name state.environment, state.continuation))]
   | Lambda _ | False | Callcc | Captured_continuation _ ->
       lookup state.continuation state.store |> Values.elements
-      |> List.concat_map (continue policy state)
+      |> List.concat_map (continue allocator state)
 
 (* Deterministic scheduling follows Section 4: one ordinary transition followed
    by collection. Optional standalone GC transitions would also explore paths
    with no collection and would lose the precision improvement. *)
-let successors ?(gc = false) policy state =
-  let next = raw_successors policy state in
+let successors_with ?(gc = false) allocator state =
+  let next = raw_successors allocator state in
   if gc then List.map collect next else next
+
+let successors ?(gc = false) policy state =
+  successors_with ~gc (builtin_allocator policy) state
 
 let is_final state =
   is_value state.control && Values.mem Empty (lookup state.continuation state.store)
@@ -239,10 +270,7 @@ let run ?(fuel = 1000) ?(gc = false) expression =
 (* No global store widening: visited states include their own stores. Exhausting
    the queue establishes successor closure. Resource cutoffs belong to the
    separate Experiment_analysis explorer, not this complete analysis API. *)
-let analyze ?(addresses = 1) ?policy ?(gc = false) expression =
-  let policy = match policy with None -> Bounded addresses | Some policy -> policy in
-  validate_policy policy;
-  if policy = Fresh then invalid_arg "Analysis requires finite allocation";
+let analyze_with ?(gc = false) allocator expression =
   let queue = Queue.create () in
   let start = initial expression in
   let reached = ref (States.singleton start) in
@@ -253,11 +281,21 @@ let analyze ?(addresses = 1) ?policy ?(gc = false) expression =
       if not (States.mem next !reached) then begin
         reached := States.add next !reached;
         Queue.add next queue
-      end) (successors ~gc policy state)
+      end) (successors_with ~gc allocator state)
   done;
   !reached
 
-let abstract_address policy = function
+let analyze ?(addresses = 1) ?policy ?(gc = false) expression =
+  let policy = match policy with None -> Bounded addresses | Some policy -> policy in
+  if policy = Fresh then invalid_arg "Analysis requires finite allocation";
+  analyze_with ~gc (builtin_allocator policy) expression
+
+let abstract_address policy address =
+  (* Validate before handling Halt: even its identity projection requires a
+     finite policy, so callers receive the same contract for every address. *)
+  validate_policy policy;
+  if policy = Fresh then invalid_arg "Alpha requires abstract allocation";
+  match address with
   | Halt -> Halt
   | Concrete (serial, location) ->
       (match policy with

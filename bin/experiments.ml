@@ -20,9 +20,21 @@ let concrete_result program =
   | Machine.Stuck _ -> "stuck", ""
   | Machine.Fuel_exhausted _ -> "fuel_exhausted", ""
 
+let check_extended_reference program outcome expected =
+  let reference = Extended_reference.run ~fuel:4000 (Extended_reference.of_syntax program) in
+  match reference, outcome with
+  | Extended_reference.Finished (value, _), "finished"
+    when Extended_reference.value_syntax value = expected -> ()
+  | Extended_reference.Stuck, "stuck" -> ()
+  | Extended_reference.Fuel_exhausted, "fuel_exhausted" -> ()
+  | _ -> failwith "Extended reference disagreement or insufficient concrete budget"
+
 let run benchmark policy_name gc max_states cpu_limit =
   let policy = allocation_policy policy_name in
   let outcome, expected = concrete_result benchmark.Experiment_examples.program in
+  (* Check extended outcomes independently before starting the exploration timer.
+     Joint fuel exhaustion supplies no termination or value-agreement claim. *)
+  check_extended_reference benchmark.program outcome expected;
   (* The independent substitution semantics checks full pure values, including
      captured environments; the reported precision metric remains only syntax. *)
   if outcome = "finished" && Syntax.is_core benchmark.program then begin

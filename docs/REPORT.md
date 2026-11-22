@@ -11,8 +11,9 @@ The implementation also supports conditionals, mutation, first-class continuatio
 and deterministic garbage collection.
 
 Validation combines generated terms, whole-state comparisons, local simulation,
-an independent capture-avoiding substitution evaluator, and an informal correctness
-argument. A reproducible twelve-program experiment separates precision, state counts,
+independent pure substitution and extended CPS evaluators, and an informal
+correctness argument. Parameterized time/allocation prepares further policy
+experiments. A reproducible twelve-program experiment separates precision, state counts,
 store footprint, and timing. Results expose allocation-dependent imprecision,
 benefits and limits of GC, and incomplete coarse-pool searches. The outcome is
 a reviewable implementation study with explicit boundaries on its claims.
@@ -119,6 +120,8 @@ documents the independence boundary.
 | GC | 294 programs; collected correspondence, cycles, address reuse, and simulation |
 | State/control | 872 generated terms, 1-5 nodes, and 22 named examples; simulation and site fixed points |
 | Independent pure semantics | 4,034 closed terms, 1-8 nodes, 12 named examples, and 1,212 open substitution-law cases |
+| Independent extended semantics | 872 generated terms and 34 named/corpus entries in six contexts, GC off/on; 5,430 terminal observations and six jointly exhausted, unassessed observations |
+| Allocation parameters | Full site/pool graph compatibility, finite per-transition time, selected continuation alternatives, and callback scheduling |
 | Invariant audit | 34 named entries and 154 tiny extended terms; support, roles, phases, fresh GC commutation, administrative descent |
 | Experiment search | Twelve programs, sites with GC off/on and small graphs for pools 1/4/16/64; complete graphs agree with the original analyzer and cutoffs are explicit |
 
@@ -139,8 +142,9 @@ interrupted experiments.
 The argument assumes natural-number counters, well-formed states, mathematical
 maps/sets, and sufficient memory/stack resources. It is an informal model proof,
 not Lean/Coq verification or compiled-code refinement. Extended abstract
-soundness is relative to the concrete Section 3 rules; those rules lack an
-independent extended-language oracle here.
+soundness is relative to the concrete Section 3 rules. An independent CPS
+evaluator now checks bounded extended observations; no general correspondence
+theorem with that evaluator or soundness of arbitrary allocation callbacks is claimed.
 
 ## 5. Reproducible experiments and results
 
@@ -209,16 +213,24 @@ include source labels, allocation provenance, reserved halt, explicit pooled
 phase, role-separated sites, and extensional comparison. They make the
 construction inspectable without constituting a novel analysis algorithm.
 
-The study adds independent pure substitution/reification, generated simulation
-checks, an invariant audit, an informal proof chapter, and reproducible experiments.
+The reproduction covers the central constructions of Sections 2-4 of the
+supplied eight-page paper. `tick`/`alloc` callbacks expose alternative integer
+time and address policies while preserving the built-in behaviors. Arbitrary
+time types, call-history policies, and optional standalone GC transitions remain
+outside scope. The [scope assessment](PAPER_TO_CODE.md#reproduction-scope)
+separates these choices from further directions and remaining validation work.
+
+The study adds independent pure substitution/reification and extended CPS
+evaluation, generated simulation and observational checks, an invariant audit,
+an informal proof chapter, and reproducible experiments.
 These demonstrate research interpretation and verification rather than a new
 theoretical result.
 
 There is no parser, arithmetic, type system, or production compiler integration.
 The corpus contains small semantic workloads, not representative applications.
 Context-sensitive allocation and global store widening are outside scope.
-An independent Section 3 semantics, extended/cyclic denotation, proof mechanization,
-and compiled resource refinement remain open. Fuel exhaustion is not a divergence
+General correspondence with the extended reference, extended/cyclic denotation,
+proof mechanization, and compiled resource refinement remain open. Fuel exhaustion is not a divergence
 certificate, and abstract final states are possibilities rather than concrete
 termination witnesses.
 
